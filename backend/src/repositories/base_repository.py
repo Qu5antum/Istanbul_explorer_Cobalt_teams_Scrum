@@ -10,6 +10,14 @@ class AbstractRepository(ABC):
     async def create(self, data: dict):
         raise NotImplementedError
     
+    @abstractmethod
+    async def get_all(self):
+        raise NotImplementedError
+    
+    @abstractmethod
+    async def get_object_by_id(self, id: int):
+        raise NotImplementedError
+    
 
 class BaseRepository(AbstractRepository):
     model = None
@@ -28,3 +36,18 @@ class BaseRepository(AbstractRepository):
         except:
             await self.session.rollback()
             raise
+    
+    async def get_all(self):
+        result = await self.session.execute(
+            select(self.model)
+        )
+
+        return result.scalars().all()
+    
+    async def get_object_by_id(self, id: int):
+        result = await self.session.execute(
+            select(self.model).where(self.model.id == id)
+        )
+
+        return result.scalar_one_or_none()
+        
