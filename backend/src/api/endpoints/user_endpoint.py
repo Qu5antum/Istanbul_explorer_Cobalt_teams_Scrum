@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.database.db import AsyncSession
+from src.database.db import AsyncSession, get_session
 from src.services.auth_service import AuthUserService
 from src.api.schemas.user_schema import UserCreate
 
@@ -11,7 +11,7 @@ user_router = APIRouter(
     tags=['users']
 )
 
-async def get_auth_service(session: AsyncSession):
+async def get_auth_service(session: AsyncSession = Depends(get_session)):
     return await AuthUserService(session=session)
 
 
