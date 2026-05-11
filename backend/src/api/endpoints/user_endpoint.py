@@ -4,6 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from src.database.db import AsyncSession, get_session
 from src.services.auth_service import AuthUserService
 from src.api.schemas.user_schema import UserCreate
+from src.auth.jwt_handler import JWTHandler
 
 
 user_router = APIRouter(
@@ -12,7 +13,7 @@ user_router = APIRouter(
 )
 
 async def get_auth_service(session: AsyncSession = Depends(get_session)):
-    return await AuthUserService(session=session)
+    return AuthUserService(session=session, jwt_handler=JWTHandler)
 
 
 @user_router.post("/register", status_code=201)

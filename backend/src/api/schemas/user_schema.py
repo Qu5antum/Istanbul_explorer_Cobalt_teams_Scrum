@@ -9,7 +9,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     phone_number: str
     password: str
-    role: UserRole
+    role: UserRole = UserRole.USER
 
 
 class UserOut(UserCreate):
