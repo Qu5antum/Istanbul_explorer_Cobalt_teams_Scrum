@@ -56,8 +56,8 @@ class PlaceService:
 
         return place
     
-    async def get_place_by_title(self, title: str):
-        place = await self.place_repo.get_title(title=title)
+    async def search_place_by_title(self, title: str):
+        place = await self.place_repo.search_title(title=title)
 
         if not place:
             raise PlaceNotFoundException("Konum bulunmadı")

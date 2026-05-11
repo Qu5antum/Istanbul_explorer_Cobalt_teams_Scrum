@@ -20,5 +20,3 @@ class CategoryRepository(BaseRepository):
         )
 
         return result.scalars().all()
-    
-    

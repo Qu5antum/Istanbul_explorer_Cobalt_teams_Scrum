@@ -29,7 +29,7 @@ class CategoryService:
         return {"detail": f"{new_category}"}
     
     # Veritabandan kategorileri çekme
-    async def get_catigories(self):
+    async def get_categories(self):
         categories = await self.category_repo.get_all()
 
         return categories

@@ -6,6 +6,8 @@ import uvicorn
 from src.core.config import settings
 from src.exception_handlers.base_exception import BaseAppException
 from src.api.endpoints.user_endpoint import user_router
+from src.api.endpoints.category_endpoint import category_route
+from src.api.endpoints.place_endpoint import places_route
 
 
 app = FastAPI(
@@ -33,6 +35,8 @@ app.add_middleware(
 
 
 app.include_router(user_router)
+app.include_router(category_route)
+app.include_router(places_route)
 
 if __name__ == "__main__":
     uvicorn.run(
