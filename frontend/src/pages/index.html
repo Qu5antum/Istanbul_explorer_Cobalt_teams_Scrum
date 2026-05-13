@@ -2,10 +2,11 @@
 <html lang="tr">
 
 <head>
-  <meta charset="UTF-8" />
+
+  <meta charset="UTF-8">
 
   <meta name="viewport"
-        content="width=device-width, initial-scale=1.0" />
+        content="width=device-width, initial-scale=1.0">
 
   <title>İstanbul Explorer</title>
 
@@ -15,12 +16,75 @@
       margin:0;
       padding:0;
       box-sizing:border-box;
-      font-family:Arial, sans-serif;
+      font-family:Arial,sans-serif;
+    }
+
+    html{
+      scroll-behavior:smooth;
     }
 
     body{
       background:#f5f5f5;
       overflow-x:hidden;
+    }
+
+
+    /* NAVBAR */
+
+    header{
+
+      position:fixed;
+
+      top:0;
+      left:0;
+
+      width:100%;
+
+      padding:20px 60px;
+
+      display:flex;
+
+      justify-content:space-between;
+
+      align-items:center;
+
+      background:rgba(0,0,0,0.4);
+
+      backdrop-filter:blur(10px);
+
+      z-index:1000;
+    }
+
+    .logo{
+
+      color:white;
+
+      font-size:30px;
+
+      font-weight:bold;
+    }
+
+    nav{
+
+      display:flex;
+
+      gap:15px;
+
+      align-items:center;
+    }
+
+    nav a{
+
+      color:white;
+
+      text-decoration:none;
+
+      transition:0.3s;
+    }
+
+    nav a:hover{
+
+      color:#60a5fa;
     }
 
 
@@ -33,24 +97,28 @@
       min-height:100vh;
 
       display:flex;
+
       align-items:center;
+
       justify-content:center;
 
       text-align:center;
 
       padding:40px;
 
-      background:url("./istanbul.jpeg");
+      background:url("istanbul.jpeg");
 
       background-size:cover;
+
       background-position:center;
+
       background-repeat:no-repeat;
 
       overflow:hidden;
     }
 
 
-    /* KARARTMA */
+    /* OVERLAY */
 
     .overlay{
 
@@ -62,11 +130,11 @@
       top:0;
       left:0;
 
-      background:rgba(0,0,0,0.5);
+      background:rgba(0,0,0,0.55);
     }
 
 
-    /* BLUR DAİRELER */
+    /* BLUR CIRCLE */
 
     .bg-circle{
 
@@ -130,9 +198,9 @@
     }
 
 
-    h1{
+    .content h1{
 
-      font-size:65px;
+      font-size:70px;
 
       margin-bottom:20px;
 
@@ -142,13 +210,13 @@
     }
 
 
-    p{
+    .content p{
 
-      font-size:20px;
+      font-size:22px;
 
       color:#f1f1f1;
 
-      margin-bottom:30px;
+      margin-bottom:35px;
 
       line-height:1.7;
 
@@ -174,7 +242,7 @@
 
     button{
 
-      padding:14px 24px;
+      padding:15px 28px;
 
       border-radius:12px;
 
@@ -200,7 +268,7 @@
 
       background:#1d4ed8;
 
-      transform:translateY(-3px);
+      transform:translateY(-4px);
     }
 
 
@@ -234,7 +302,7 @@
 
       background:#e5e5e5;
 
-      transform:translateY(-3px);
+      transform:translateY(-4px);
     }
 
 
@@ -254,24 +322,39 @@
     }
 
 
-
     /* FEATURES */
 
     .features{
 
-  display:grid;
+      position:relative;
 
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      display:grid;
 
-  gap:25px;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
 
-  padding:120px 40px;
+      gap:25px;
 
-  max-width:100%;
+      padding:120px 40px;
 
-  margin:auto;
+      overflow:hidden;
+    }
 
-  background:url("./istanbul.jpg");
+
+    /* BLUR BACKGROUND */
+
+    .features::before{
+
+  content:"";
+
+  position:absolute;
+
+  top:0;
+  left:0;
+
+  width:100%;
+  height:100%;
+
+  background:url("istanbul.jpg");
 
   background-size:cover;
 
@@ -279,35 +362,48 @@
 
   background-repeat:no-repeat;
 
-  position:relative;
+  z-index:1;
 }
 
+    /* DARK OVERLAY */
+
+    .features::after{
+
+      content:"";
+
+      position:absolute;
+
+      top:0;
+      left:0;
+
+      width:100%;
+      height:100%;
+
+      background:rgba(0,0,0,0.35);
+
+      z-index:2;
+    }
+
+
+    /* CARD */
 
     .card{
 
-  background:rgba(255,255,255,0.9);
+      position:relative;
 
-  backdrop-filter:blur(10px);
+      z-index:10;
 
-  padding:30px;
+      background:rgba(255,255,255,0.9);
 
-  border-radius:20px;
+      backdrop-filter:blur(10px);
 
-  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+      padding:30px;
 
-  transition:0.4s;
+      border-radius:20px;
 
-  opacity:0;
+      box-shadow:0 10px 30px rgba(0,0,0,0.15);
 
-  transform:translateY(20px);
-     }
-
-
-    .card.show{
-
-      opacity:1;
-
-      transform:translateY(0);
+      transition:0.4s;
     }
 
 
@@ -321,15 +417,18 @@
 
       margin-bottom:15px;
 
-      font-size:22px;
+      font-size:24px;
+
+      color:#111;
     }
 
 
     .card p{
 
       color:#555;
-    }
 
+      font-size:17px;
+    }
 
 
     /* FOOTER */
@@ -346,24 +445,37 @@
     }
 
 
-
     /* RESPONSIVE */
 
     @media(max-width:768px){
 
-      h1{
-        font-size:42px;
+      header{
+
+        flex-direction:column;
       }
 
-      p{
-        font-size:17px;
+      nav{
+
+        margin-top:15px;
+      }
+
+      .content h1{
+
+        font-size:45px;
+      }
+
+      .content p{
+
+        font-size:18px;
       }
 
       .buttons{
+
         flex-direction:column;
       }
 
       button{
+
         width:100%;
       }
     }
@@ -373,6 +485,38 @@
 </head>
 
 <body>
+
+
+  <!-- NAVBAR -->
+
+  <header>
+
+    <div class="logo">
+
+      İstanbul Explorer
+
+    </div>
+
+    <nav>
+
+      <a href="#">Ana Sayfa</a>
+
+      <a href="#features">
+        Özellikler
+      </a>
+
+      <a href="login.html">
+        Giriş Yap
+      </a>
+
+      <a href="register.html">
+        Kayıt Ol
+      </a>
+
+    </nav>
+
+  </header>
+
 
 
   <!-- HERO -->
@@ -388,44 +532,47 @@
 
     <div class="content">
 
-      <h1>İstanbul Explorer</h1>
+      <h1>
+
+        İstanbul Explorer
+
+      </h1>
 
       <p>
 
         İstanbul’a yeni gelenler için modern şehir rehberi.
 
-        Gezilecek yerleri keşfet, kaybolmadan dolaş,
-        tarihi mekanları öğren ve İstanbul’u kolayca deneyimle.
+        Gezilecek yerleri keşfet,
+        tarihi mekanları öğren
+        ve İstanbul’u kolayca deneyimle.
 
       </p>
 
 
       <div class="buttons">
 
-    <button class="primary"
-            onclick="window.location.href='places.html'">
+        <button class="primary"
+                onclick="window.location.href='places.html'">
 
-      Yerleri Ziyaret Et
+          Yerleri Keşfet
 
-    </button>
-
-
-    <button class="outline"
-            onclick="window.location.href='login.html'">
-
-      Giriş Yap
-
-    </button>
+        </button>
 
 
-    <button class="secondary"
-            onclick="window.location.href='register.html'">
+        <button class="outline"
+                onclick="window.location.href='login.html'">
 
-      Kayıt Ol
+          Giriş Yap
 
-    </button>
+        </button>
 
-     </div>
+
+        <button class="secondary"
+                onclick="window.location.href='register.html'">
+
+          Kayıt Ol
+
+        </button>
 
       </div>
 
@@ -437,15 +584,19 @@
 
   <!-- FEATURES -->
 
-  <section class="features">
+  <section class="features"
+           id="features">
 
 
     <div class="card">
 
-      <h3>Akıllı Keşif</h3>
+      <h3>📍 Akıllı Keşif</h3>
 
       <p>
-        İstanbul’daki en popüler mekanları hızlıca keşfet.
+
+        İstanbul’daki en popüler mekanları
+        hızlıca keşfet.
+
       </p>
 
     </div>
@@ -454,10 +605,13 @@
 
     <div class="card">
 
-      <h3>Kolay Navigasyon</h3>
+      <h3>🗺️ Kolay Navigasyon</h3>
 
       <p>
-        Şehirde kaybolmadan rahatça gezin.
+
+        Şehirde kaybolmadan
+        rahatça gezin.
+
       </p>
 
     </div>
@@ -466,10 +620,13 @@
 
     <div class="card">
 
-      <h3>Turist Rehberi</h3>
+      <h3>🏛️ Turist Rehberi</h3>
 
       <p>
-        Yeni gelenler için özel öneriler ve gezi noktaları.
+
+        Yeni gelenler için
+        özel öneriler ve gezi noktaları.
+
       </p>
 
     </div>
@@ -482,38 +639,10 @@
 
   <footer>
 
-    © <span id="year"></span> İstanbul Explorer
+    © 2026 İstanbul Explorer
 
   </footer>
 
-
-
-  <script>
-
-    document.getElementById("year").textContent =
-      new Date().getFullYear();
-
-
-    const cards =
-      document.querySelectorAll(".card");
-
-
-    const observer =
-      new IntersectionObserver(entries => {
-
-      entries.forEach(entry => {
-
-        if(entry.isIntersecting){
-
-          entry.target.classList.add("show");
-        }
-      });
-    });
-
-
-    cards.forEach(card => observer.observe(card));
-
-  </script>
-
 </body>
+
 </html>

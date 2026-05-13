@@ -2,7 +2,7 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial, sans-serif;
+    font-family:Arial,sans-serif;
 }
 
 body{
@@ -10,22 +10,26 @@ body{
     height:100vh;
 
     display:flex;
+
     justify-content:center;
+
     align-items:center;
 
-    background:url("./images/istanbul.jpg");
+    background:url("./istanbul.jpeg");
 
     background-size:cover;
+
     background-position:center;
+
     background-repeat:no-repeat;
 
-    overflow:hidden;
-
     position:relative;
+
+    overflow:hidden;
 }
 
 
-/* KARARTMA */
+/* OVERLAY */
 
 body::before{
 
@@ -43,7 +47,7 @@ body::before{
 }
 
 
-/* FORM CONTAINER */
+/* FORM */
 
 .form-container{
 
@@ -53,31 +57,29 @@ body::before{
 
     width:400px;
 
-    padding:40px;
-
-    border-radius:25px;
-
     background:rgba(255,255,255,0.12);
 
     backdrop-filter:blur(15px);
 
+    padding:40px;
+
+    border-radius:20px;
+
     box-shadow:0 10px 30px rgba(0,0,0,0.3);
 
-    animation:fadeUp 1s ease;
+    color:white;
 }
 
 
 /* TITLE */
 
-.form-container h2{
+h2{
 
     text-align:center;
 
-    color:white;
-
-    font-size:38px;
-
     margin-bottom:30px;
+
+    font-size:35px;
 }
 
 
@@ -104,20 +106,6 @@ input{
     border-radius:12px;
 
     outline:none;
-
-    background:rgba(255,255,255,0.18);
-
-    color:white;
-
-    font-size:16px;
-}
-
-
-/* PLACEHOLDER */
-
-input::placeholder{
-
-    color:#f1f1f1;
 }
 
 
@@ -135,7 +123,7 @@ button{
 
     color:white;
 
-    font-size:17px;
+    font-size:16px;
 
     cursor:pointer;
 
@@ -158,8 +146,6 @@ p{
     text-align:center;
 
     margin-top:20px;
-
-    color:white;
 }
 
 
@@ -170,40 +156,4 @@ a{
     color:#60a5fa;
 
     text-decoration:none;
-
-    font-weight:bold;
-}
-
-
-a:hover{
-
-    text-decoration:underline;
-}
-
-
-/* ANIMATION */
-
-@keyframes fadeUp{
-
-    from{
-        opacity:0;
-        transform:translateY(20px);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-
-/* RESPONSIVE */
-
-@media(max-width:500px){
-
-    .form-container{
-
-        width:90%;
-    }
-
 }
