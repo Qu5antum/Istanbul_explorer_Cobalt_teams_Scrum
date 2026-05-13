@@ -29,8 +29,6 @@ class BaseRepository(AbstractRepository):
         try:
             new_object = self.model(**kwargs)  
             self.session.add(new_object)
-            await self.session.commit()
-            await self.session.refresh(new_object)
 
             return new_object
         except:

@@ -27,7 +27,6 @@ async def create_place(
 
 @places_route.get("/admin/place/all", status_code=200)
 async def get_all_places(
-    user: User = Depends(require_roles(UserRole.ADMIN)),
     place_service: PlaceService = Depends(get_place_service)
 ):
     return await place_service.get_all_places()
@@ -50,4 +49,20 @@ async def search_title(
 ):
     return await place_service.search_place_by_title(title=title)
 
-    
+
+@places_route.get("/admin/category/{category_id}")
+async def get_place_by_category(
+    category_id: int,
+    user: User = Depends(require_roles(UserRole.USER, UserRole.ADMIN)),
+    place_service: PlaceService = Depends(get_place_service)
+):
+    return await place_service.get_place_with_category(category_id=category_id)
+
+
+@places_route.delete("/admin/delete_place", status_code=200)
+async def delete_place(
+    place_id: int,
+    user: User = Depends(require_roles(UserRole.ADMIN)),
+    place_service: PlaceService = Depends(get_place_service)
+):
+    return await place_service.delete_place_with_id(place_id=place_id)

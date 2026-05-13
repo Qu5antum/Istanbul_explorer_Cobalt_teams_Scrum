@@ -26,9 +26,8 @@ async def create_category(
     return await category_service.create_category(category=category)
 
 
-@category_route.get("/admin/category", status_code=200)
+@category_route.get("/category", status_code=200)
 async def get_all_categories(
-    user: User = Depends(require_roles(UserRole.ADMIN)),
     category_service: CategoryService = Depends(get_category_service)
 ):
     return await category_service.get_categories()

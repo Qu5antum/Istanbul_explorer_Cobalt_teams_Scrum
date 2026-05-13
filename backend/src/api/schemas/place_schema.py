@@ -9,6 +9,7 @@ class PlaceCreate(BaseModel):
     longitude: float
     address: str
     description: str
+    image_path: str
     category_ids: list[int]
 
 

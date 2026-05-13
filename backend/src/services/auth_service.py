@@ -60,6 +60,9 @@ class AuthUserService:
                 password=hashed_password,
                 role=user.role
             )
+
+            await self.session.commit()
+            await self.session.refresh(new_user)
         except IntegrityError:
             raise DatabaseException("Veritaban hatası")
         

@@ -23,10 +23,13 @@ class CategoryService:
             new_category = await self.category_repo.create(
                 title=category.title
             )
+
+            await self.session.commit()
+            await self.session.refresh(new_category)
         except IntegrityError:
             raise DatabaseException("Veritaban hatası")
         
-        return {"detail": f"{new_category}"}
+        return {"detail": "Kategori başarıyla oluşturuldu"}
     
     # Veritabandan kategorileri çekme
     async def get_categories(self):
