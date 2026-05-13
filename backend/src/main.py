@@ -8,6 +8,7 @@ from src.exception_handlers.base_exception import BaseAppException
 from src.api.endpoints.user_endpoint import user_router
 from src.api.endpoints.category_endpoint import category_route
 from src.api.endpoints.place_endpoint import places_route
+from src.api.endpoints.comment_endpoint import comment_router
 
 
 app = FastAPI(
@@ -27,7 +28,7 @@ async def app_exception_handler(request, exc):
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = settings.cors_origins,
+    allow_origins = ["*"],
     allow_credentials = True,
     allow_methods = ["*"],
     allow_headers = ["*"]
@@ -37,6 +38,7 @@ app.add_middleware(
 app.include_router(user_router)
 app.include_router(category_route)
 app.include_router(places_route)
+app.include_router(comment_router)
 
 if __name__ == "__main__":
     uvicorn.run(

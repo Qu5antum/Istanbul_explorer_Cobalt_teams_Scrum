@@ -11,6 +11,10 @@ class AbstractRepository(ABC):
         raise NotImplementedError
     
     @abstractmethod
+    async def get(self, id: int):
+        raise NotImplementedError
+    
+    @abstractmethod
     async def get_all(self):
         raise NotImplementedError
     
@@ -34,6 +38,11 @@ class BaseRepository(AbstractRepository):
         except:
             await self.session.rollback()
             raise
+
+    async def get(self, id):
+        obj = await self.session.get(self.model, id)
+
+        return obj
     
     async def get_all(self):
         result = await self.session.execute(

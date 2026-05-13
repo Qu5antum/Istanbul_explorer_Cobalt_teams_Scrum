@@ -28,6 +28,6 @@ async def get_current_user(
     user = result.scalar_one_or_none()
     
     if not user:
-        raise UserNotFoundException("Пользователь не найден.")
+        raise UserNotFoundException("Kullanıcı bulunmadı.")
     
     return user

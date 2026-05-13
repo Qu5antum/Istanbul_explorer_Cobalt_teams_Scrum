@@ -1,4 +1,3 @@
-from sqlalchemy.exc import IntegrityError
 from typing import Any
 
 from src.database.db import AsyncSession
