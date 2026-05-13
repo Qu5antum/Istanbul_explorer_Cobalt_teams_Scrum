@@ -20,6 +20,36 @@ export const registerUser = async (userData) => {
         throw error.response?.data || error;
     }
 };
+import { registerUser } from "./api.js";
+
+const form = document.querySelector("form");
+
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const username = document.querySelector("#username").value;
+    const email = document.querySelector("#email").value;
+    const password = document.querySelector("#password").value;
+
+    const userData = {
+        username,
+        email,
+        password,
+    };
+
+    try {
+        const result = await registerUser(userData);
+
+        alert("Kayıt başarılı!");
+
+        window.location.href = "login.html";
+
+    } catch (error) {
+        console.log(error);
+
+        alert("Kayıt başarısız!");
+    }
+});
 
 
 // ======================
@@ -55,6 +85,36 @@ export const loginUser = async (username, password) => {
         throw error.response?.data || error;
     }
 };
+
+import { loginUser } from "./api.js";
+
+constform = document.querySelector("form");
+
+form.addEventListener("submit", async (e) => {
+
+    e.preventDefault();
+
+    const username = document.querySelector("#username").value;
+
+    const password = document.querySelector("#password").value;
+
+    try {
+
+        const result = await loginUser(username, password);
+
+        console.log(result);
+
+        alert("Giriş başarılı!");
+
+        window.location.href = "index.html";
+
+    } catch (error) {
+
+        console.log(error);
+
+        alert("Giriş başarısız!");
+    }
+});
 
 
 // ======================
