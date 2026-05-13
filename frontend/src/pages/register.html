@@ -3,47 +3,117 @@
 
 <head>
 
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-    <title>Kayıt Ol</title>
+  <title>Kayıt Ol</title>
 
-    <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet"
+        href="style.css">
 
 </head>
 
 <body>
 
-    <div class="form-container">
-
-        <h2>Kayıt Ol</h2>
-
-        <form id="registerForm">
-            
-            <input id="email" placeholder="Email">
-            <input id="phone" placeholder="Telefon numara">
-            <input id="password" type="password" placeholder="Password">
-
-            <button type="submit">Kayıt</button>
-
-        </form>
-
-        <p>
-
-            Zaten hesabın var mı?
-
-            <a href="login.html">
-                Giriş Yap
-            </a>
-
-        </p>
-
-    </div>
+<div class="form-container">
 
 
-    <script type="module" src="scripts/auth.js"></script>
+
+  <div class="logo">
+
+    İstanbul Explorer
+
+  </div>
+
+
+  
+
+  <h2>Kayıt Ol</h2>
+
+
+  <!-- FORM -->
+
+  <form id="registerForm">
+
+    <input type="text"
+           id="username"
+           placeholder="Kullanıcı Adı">
+
+    <input type="email"
+           id="email"
+           placeholder="Email">
+
+    <input type="password"
+           id="password"
+           placeholder="Şifre">
+
+
+    <button type="submit">
+
+      Kayıt Ol
+
+    </button>
+
+  </form>
+
+
+  <!-- LOGIN -->
+
+  <p>
+
+    Zaten hesabın var mı?
+
+    <a href="login.html">
+
+      Giriş Yap
+
+    </a>
+
+  </p>
+
+</div>
+
+
+<script>
+
+  const form =
+    document.getElementById("registerForm");
+
+
+  form.addEventListener("submit",(e)=>{
+
+    e.preventDefault();
+
+    const username =
+      document.getElementById("username").value;
+
+    const email =
+      document.getElementById("email").value;
+
+    const password =
+      document.getElementById("password").value;
+
+
+    if(
+      username === "" ||
+      email === "" ||
+      password === ""
+    ){
+
+      alert("Lütfen tüm alanları doldurun");
+
+    }else{
+
+      alert("Kayıt başarılı");
+
+      window.location.href = "login.html";
+    }
+
+  });
+
+</script>
 
 </body>
 
