@@ -25,14 +25,14 @@ async def create_place(
     return await place_service.create_place(place=place)
 
 
-@places_route.get("/admin/place/all", status_code=200)
+@places_route.get("/place/all", status_code=200)
 async def get_all_places(
     place_service: PlaceService = Depends(get_place_service)
 ):
     return await place_service.get_all_places()
 
 
-@places_route.get("/admin/place/{place_id}", status_code=200)
+@places_route.get("/place/{place_id}", status_code=200)
 async def get_place_by_id(
     place_id: int,
     user: User = Depends(require_roles(UserRole.ADMIN)),
@@ -50,7 +50,7 @@ async def search_title(
     return await place_service.search_place_by_title(title=title)
 
 
-@places_route.get("/admin/category/{category_id}")
+@places_route.get("/category/{category_id}")
 async def get_place_by_category(
     category_id: int,
     user: User = Depends(require_roles(UserRole.USER, UserRole.ADMIN)),

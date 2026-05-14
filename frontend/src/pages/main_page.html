@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8" />
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>Mekanlar</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f3f4f6;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .topbar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            outline: none;
+            font-size: 16px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            background: black;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
+        .categories {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+        }
+
+        .category-btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 999px;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: 0.2s;
+        }
+
+        .category-btn:hover {
+            background: black;
+            color: white;
+        }
+
+        .places {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 18px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .card-description {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+
+        .card-info {
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .map-link {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            background: black;
+            color: white;
+            font-weight: 600;
+        }
+
+        .error-box {
+            display: none;
+            margin-bottom: 20px;
+            padding: 14px;
+            border-radius: 10px;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1 class="title">
+            İstanbul Mekanları
+        </h1>
+
+        <div
+            id="errorBox"
+            class="error-box"
+        ></div>
+
+        <div class="topbar">
+
+            <input
+                type="text"
+                id="searchInput"
+                class="search-input"
+                placeholder="Mekan ara..."
+            />
+
+            <button
+                id="searchBtn"
+                class="btn"
+            >
+                Ara
+            </button>
+
+            <button
+                id="allBtn"
+                class="btn"
+            >
+                Tümü
+            </button>
+
+        </div>
+
+        <div
+            id="categories"
+            class="categories"
+        ></div>
+
+        <div
+            id="places"
+            class="places"
+        ></div>
+
+    </div>
+
+    <script type="module">
+
+        import {
+            getCategories,
+            getAllPlaces,
+            getPlacesByCategory,
+            searchPlace
+        } from "../scripts/api.js";
+
+        const categoriesContainer = document.getElementById("categories");
+        const placesContainer = document.getElementById("places");
+        const errorBox = document.getElementById("errorBox");
+
+        const searchInput = document.getElementById("searchInput");
+        const searchBtn = document.getElementById("searchBtn");
+        const allBtn = document.getElementById("allBtn");
+
+        /* =========================
+           UI
+        ========================= */
+
+        function showError(message) {
+            errorBox.style.display = "block";
+            errorBox.textContent = message;
+
+            setTimeout(() => {
+                errorBox.style.display = "none";
+            }, 3000);
+        }
+
+        /* =========================
+           RENDER PLACES
+        ========================= */
+
+        function renderPlaces(places) {
+
+            placesContainer.innerHTML = "";
+
+            if (!places.length) {
+                placesContainer.innerHTML = `
+                    <h2>Mekan bulunamadı</h2>
+                `;
+                return;
+            }
+
+            places.forEach(place => {
+
+                const card = document.createElement("div");
+
+                card.className = "card";
+
+                card.addEventListener("click", () => {
+                    window.location.href = `place.html?id=${place.id}`;
+                });
+                card.innerHTML = `
+                    <img
+                        src="http://127.0.0.1:8000/${place.image_path}"
+                        alt="${place.title}"
+                        class="card-image"
+                        onerror="this.src='https://placehold.co/600x400'"
+                    />
+
+                    <div class="card-body">
+
+                        <h2 class="card-title">
+                            ${place.title}
+                        </h2>
+
+                        <p class="card-description">
+                            ${place.description}
+                        </p>
+
+                        <p class="card-info">
+                            <strong>Adres:</strong>
+                            ${place.address}
+                        </p>
+
+                        <p class="card-info">
+                            <strong>Fiyat:</strong>
+                            ${place.price}
+                        </p>
+
+                        <a
+                            href="${place.link}"
+                            target="_blank"
+                            class="map-link"
+                        >
+                            Haritada Aç
+                        </a>
+
+                    </div>
+                `;
+
+                placesContainer.appendChild(card);
+            });
+        }
+
+        /* =========================
+           LOAD CATEGORIES
+        ========================= */
+
+        async function loadCategories() {
+
+            try {
+
+                const categories = await getCategories();
+
+                categoriesContainer.innerHTML = "";
+
+                categories.forEach(category => {
+
+                    const button = document.createElement("button");
+
+                    button.className = "category-btn";
+
+                    button.textContent = category.title;
+
+                    button.addEventListener("click", async () => {
+
+                        try {
+
+                            const places = await getPlacesByCategory(category.id);
+
+                            renderPlaces(places);
+
+                        } catch (error) {
+
+                            console.error(error);
+
+                            showError("Kategori yüklenemedi");
+                        }
+                    });
+
+                    categoriesContainer.appendChild(button);
+                });
+
+            } catch (error) {
+
+                console.error(error);
+
+                showError("Kategoriler alınamadı");
+            }
+        }
+
+        /* =========================
+           LOAD ALL PLACES
+        ========================= */
+
+        async function loadAllPlaces() {
+
+            try {
+
+                const places = await getAllPlaces();
+
+                renderPlaces(places);
+
+            } catch (error) {
+
+                console.error(error);
+
+                showError("Mekanlar alınamadı");
+            }
+        }
+
+        /* =========================
+           SEARCH
+        ========================= */
+
+        async function handleSearch() {
+
+            const title = searchInput.value.trim();
+
+            if (!title) {
+                return loadAllPlaces();
+            }
+
+            try {
+
+                const result = await searchPlace(title);
+
+                renderPlaces(result);
+
+            } catch (error) {
+
+                console.error(error);
+
+                showError("Arama başarısız");
+            }
+        }
+
+        searchBtn.addEventListener("click", handleSearch);
+
+        searchInput.addEventListener("keydown", (event) => {
+
+            if (event.key === "Enter") {
+                handleSearch();
+            }
+        });
+
+        allBtn.addEventListener("click", loadAllPlaces);
+
+        /* =========================
+           INIT
+        ========================= */
+
+        loadCategories();
+        loadAllPlaces();
+
+    </script>
+
+</body>
+</html>

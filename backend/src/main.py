@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 
 from src.core.config import settings
@@ -17,6 +18,7 @@ app = FastAPI(
     docs_url="/docs",
 )
 
+app.mount("/images", StaticFiles(directory="images"), name="images")
 
 @app.exception_handler(BaseAppException)
 async def app_exception_handler(request, exc):

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>Mekan Detayı</title>
+
+    <!-- LEAFLET -->
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet/dist/leaflet.css"
+    />
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- ROUTING -->
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"
+    />
+
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f3f4f6;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+        }
+
+        .image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+        }
+
+        .content {
+            padding: 32px;
+        }
+
+        .title {
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+
+        .description {
+            color: #555;
+            line-height: 1.7;
+            margin-bottom: 24px;
+            font-size: 18px;
+        }
+
+        .info {
+            margin-bottom: 14px;
+            font-size: 17px;
+        }
+
+        .map-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 14px 20px;
+            border-radius: 12px;
+            background: black;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 24px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+
+        #map {
+            width: 100%;
+            height: 500px;
+            margin-top: 30px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <a
+            href="./main_page.html"
+            class="back-btn"
+        >
+            ← Geri Dön
+        </a>
+
+        <div id="placeDetail"></div>
+
+        <div id="map"></div>
+
+    </div>
+
+    <script type="module">
+
+        import { getPlaceById } from "../scripts/api.js";
+
+        const container = document.getElementById("placeDetail");
+
+        const params = new URLSearchParams(window.location.search);
+
+        const placeId = params.get("id");
+
+        async function loadPlaceDetail() {
+
+            try {
+
+                const place = await getPlaceById(placeId);
+
+                container.innerHTML = `
+                    <div class="card">
+
+                        <img
+                            src="http://127.0.0.1:8000/${place.image_path}"
+                            class="image"
+                            alt="${place.title}"
+                        />
+
+                        <div class="content">
+
+                            <h1 class="title">
+                                ${place.title}
+                            </h1>
+
+                            <p class="description">
+                                ${place.description}
+                            </p>
+
+                            <p class="info">
+                                <strong>Adres:</strong>
+                                ${place.address}
+                            </p>
+
+                            <p class="info">
+                                <strong>Fiyat:</strong>
+                                ${place.price}
+                            </p>
+
+                            <p class="info">
+                                <strong>Latitude:</strong>
+                                ${place.latitude}
+                            </p>
+
+                            <p class="info">
+                                <strong>Longitude:</strong>
+                                ${place.longitude}
+                            </p>
+
+                            <p class="info">
+                                <strong>Eklenme Tarihi:</strong>
+                                ${new Date(place.created_at).toLocaleString()}
+                            </p>
+
+                            <a
+                                href="${place.link}"
+                                target="_blank"
+                                class="map-btn"
+                            >
+                                Google Maps Aç
+                            </a>
+
+                        </div>
+
+                    </div>
+                `;
+
+                initializeMap(place);
+
+            } catch (error) {
+
+                console.error(error);
+
+                container.innerHTML = `
+                    <h2>Mekan yüklenemedi</h2>
+                `;
+            }
+        }
+
+        /* =========================
+           MAP
+        ========================= */
+
+        function initializeMap(place) {
+
+            const destinationLat = place.latitude;
+            const destinationLng = place.longitude;
+
+            const map = L.map("map").setView(
+                [destinationLat, destinationLng],
+                14
+            );
+
+            L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+                    attribution: "&copy; OpenStreetMap contributors"
+                }
+            ).addTo(map);
+
+            /* PLACE MARKER */
+
+            L.marker([destinationLat, destinationLng])
+                .addTo(map)
+                .bindPopup(place.title)
+                .openPopup();
+
+            /* USER LOCATION */
+
+            navigator.geolocation.getCurrentPosition(
+
+                (position) => {
+
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+
+                    /* USER MARKER */
+
+                    L.marker([userLat, userLng])
+                        .addTo(map)
+                        .bindPopup("Sizin Konumunuz");
+
+                    /* ROUTE */
+
+                    L.Routing.control({
+
+                        waypoints: [
+                            L.latLng(userLat, userLng),
+                            L.latLng(destinationLat, destinationLng)
+                        ],
+
+                        routeWhileDragging: false,
+
+                        show: false,
+
+                        addWaypoints: false,
+
+                        draggableWaypoints: false,
+
+                        fitSelectedRoutes: true
+
+                    }).addTo(map);
+
+                },
+
+                (error) => {
+
+                    console.error("Konum alınamadı:", error);
+
+                }
+
+            );
+        }
+
+        loadPlaceDetail();
+
+    </script>
+
+</body>
+
+</html>

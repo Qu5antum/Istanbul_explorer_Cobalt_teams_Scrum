@@ -2,47 +2,40 @@
 <html lang="tr">
 
 <head>
-
-  <meta charset="UTF-8">
-
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-  <title>Giriş Yap</title>
-
-  <link rel="stylesheet" href="style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap</title>
+    <link rel="stylesheet"
+          href="style.css">
 </head>
-
 <body>
-
-  <div class="form-container">
-
-    <!-- LOGO -->
-
-    <div class="logo">
-
-            <input id="username" placeholder="Email">
-            <input id="password" type="password" placeholder="Password">
-
-            <button type="submit">Giriş</button>
-
+    <div class="form-container">
+        <h2>Giriş Yap</h2>
+        <form id="loginForm">
+            <input
+                id="username"
+                type="text"
+                placeholder="Email"
+                required
+            >
+            <input
+                id="password"
+                type="password"
+                placeholder="Şifre"
+                required
+            >
+            <button type="submit">
+                Giriş Yap
+            </button>
         </form>
-
         <p>
-
             Hesabın yok mu?
-
             <a href="register.html">
                 Kayıt Ol
             </a>
-
         </p>
-
     </div>
-
-    <script type="module" src="scripts/auth.js"></script>
-
+    <script type="module"src="../scripts/auth.js"></script>
 </body>
-
 </html>
