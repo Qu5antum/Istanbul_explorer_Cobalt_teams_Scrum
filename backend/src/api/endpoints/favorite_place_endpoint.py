@@ -15,7 +15,7 @@ async def get_favorite_place_service(session: AsyncSession = Depends(get_session
     return FavoritePlaceService(session=session)
 
 
-@favorite_place_router.post("place/{place_id}/favorite", status_code=201)
+@favorite_place_router.post("/place/{place_id}/favorite", status_code=201)
 async def add_to_favorite(
     place_id: int,
     user: User = Depends(require_roles(UserRole.USER, UserRole.ADMIN)),

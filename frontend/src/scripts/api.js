@@ -6,29 +6,22 @@ function getToken() {
 
 function getHeaders(contentType = "application/json") {
     const headers = {};
-
     if (contentType) {
         headers["Content-Type"] = contentType;
     }
-
     const token = getToken();
-
     if (token) {
         headers["Authorization"] = `Bearer ${token}`;
     }
-
     return headers;
 }
 
 async function request(endpoint, options = {}) {
     const response = await fetch(`${API_URL}${endpoint}`, options);
-
     const data = await response.json();
-
     if (!response.ok) {
         throw new Error(data.detail || "Bir hata oluştu");
     }
-
     return data;
 }
 
@@ -112,14 +105,39 @@ export async function getPlaceComments(placeId) {
 }
 
 export async function createComment(placeId, title) {
-
     return request(`/place/${placeId}/comment/create/`, {
         method: "POST",
-
         headers: getHeaders(),
-
         body: JSON.stringify({
             title
         })
+    });
+}
+
+/* =========================
+   FAVORITES
+========================= */
+
+export async function addPlaceToFavorites(placeId) {
+    return request(`/place/${placeId}/favorite`, {
+        method: "POST",
+        headers: getHeaders(null)
+    });
+}
+
+/* =========================
+   FAVORITES
+========================= */
+
+export async function getFavoritePlaces() {
+    return request("/user/favorites", {
+        headers: getHeaders(null)
+    });
+}
+
+export async function removeFavoritePlace(placeId) {
+    return request(`/place/${placeId}/favorite`, {
+        method: "DELETE",
+        headers: getHeaders(null)
     });
 }

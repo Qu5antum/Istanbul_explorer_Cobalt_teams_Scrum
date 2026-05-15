@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Favori Mekanlar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: #f3f4f6;
+            padding: 40px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        .title {
+            font-size: 42px;
+            font-weight: 700;
+        }
+        .back-btn {
+            text-decoration: none;
+            color: black;
+            font-weight: 600;
+        }
+        .places-grid {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fill,
+                minmax(320px, 1fr)
+            );
+            gap: 24px;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+        }
+        .card-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .card-description {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        .card-info {
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .detail-btn,
+        .remove-btn {
+            flex: 1;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+        }
+        .detail-btn {
+            background: black;
+            color: white;
+        }
+        .remove-btn {
+            background: #ef4444;
+            color: white;
+        }
+        .empty-box {
+            margin-top: 100px;
+            text-align: center;
+        }
+        .empty-title {
+            font-size: 32px;
+            margin-bottom: 14px;
+        }
+        .empty-text {
+            color: #666;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="topbar">
+            <h1 class="title">
+                Favori Mekanlar
+            </h1>
+            <a href="./main_page.html" class="back-btn">
+                Ana Sayfa
+            </a>
+        </div>
+        <div id="placesGrid"class="places-grid"></div>
+    </div>
+    <script type="module">
+        import {
+            getFavoritePlaces,
+            removeFavoritePlace
+        } from "../scripts/api.js";
+        const placesGrid = document.getElementById("placesGrid");
+        /* =========================
+           LOAD FAVORITES
+        ========================= */
+        async function loadFavorites() {
+            try {
+                const places = await getFavoritePlaces();
+                placesGrid.innerHTML = "";
+                if (!places.length) {
+                    placesGrid.innerHTML = `
+                        <div class="empty-box">
+                            <h2 class="empty-title">
+                                Henüz favori mekan yok
+                            </h2>
+                            <p class="empty-text">
+                                Beğendiğiniz mekanları favorilere ekleyin
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+                places.forEach(place => {
+                    const card = document.createElement("div");
+                    card.className = "card";
+                    card.innerHTML = `
+                        <img
+                            src="http://127.0.0.1:8000/${place.image_path}" class="card-image" alt="${place.title}"/>
+                        <div class="card-body">
+                            <h2 class="card-title">
+                                ${place.title}
+                            </h2>
+                            <p class="card-description">
+                                ${place.description}
+                            </p>
+                            <p class="card-info">
+                                <strong>Adres:</strong>
+                                ${place.address}
+                            </p>
+                            <p class="card-info">
+                                <strong>Fiyat:</strong>
+                                ${place.price}
+                            </p>
+                            <div class="actions">
+                                <a href="./place.html?id=${place.id}" class="detail-btn">
+                                    Detay
+                                </a>
+                                <button class="remove-btn" data-id="${place.id}">
+                                    Sil
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    const removeBtn = card.querySelector(".remove-btn");
+
+                    removeBtn.addEventListener(
+                        "click",
+                        async () => {
+                            try {
+                                await removeFavoritePlace(place.id);
+                                card.remove();
+                                if (!placesGrid.children.length) {
+                                    loadFavorites();
+                                }
+                            } catch (error) {
+                                console.error(error);
+                                alert(
+                                    "Favorilerden silinemedi"
+                                );
+                            }
+                        }
+                    );
+                    placesGrid.appendChild(card);
+                });
+            } catch (error) {
+                console.error(error);
+                placesGrid.innerHTML = `
+                    <h2>
+                        Favoriler yüklenemedi
+                    </h2>
+                `;
+            }
+        }
+        loadFavorites();
+    </script>
+</body>
+</html>

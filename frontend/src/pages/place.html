@@ -2,87 +2,58 @@
 <html lang="tr">
 
 <head>
-
     <meta charset="UTF-8" />
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Mekan Detayı</title>
-
     <!-- LEAFLET -->
-
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet/dist/leaflet.css"
-    />
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
     <!-- ROUTING -->
-
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"
-    />
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"/>
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
-
     <style>
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: Arial, sans-serif;
         }
-
         body {
             background: #f3f4f6;
             padding: 40px;
         }
-
         .container {
             max-width: 1100px;
             margin: 0 auto;
         }
-
         .card {
             background: white;
             border-radius: 24px;
             overflow: hidden;
             box-shadow: 0 4px 25px rgba(0,0,0,0.08);
         }
-
         .image {
             width: 100%;
             height: 500px;
             object-fit: cover;
         }
-
         .content {
             padding: 32px;
         }
-
         .title {
             font-size: 42px;
             margin-bottom: 20px;
         }
-
         .description {
             color: #555;
             line-height: 1.7;
             margin-bottom: 24px;
             font-size: 18px;
         }
-
         .info {
             margin-bottom: 14px;
             font-size: 17px;
         }
-
         .map-btn {
             display: inline-block;
             margin-top: 20px;
@@ -93,7 +64,6 @@
             text-decoration: none;
             font-weight: 600;
         }
-
         .back-btn {
             display: inline-block;
             margin-bottom: 24px;
@@ -101,7 +71,6 @@
             color: black;
             font-weight: bold;
         }
-
         #map {
             width: 100%;
             height: 500px;
@@ -109,99 +78,122 @@
             border-radius: 20px;
             overflow: hidden;
         }
-
+        .comments-section {
+            margin-top: 40px;
+        }
+        .comments-title {
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
+        .comment-form {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .comment-input {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            outline: none;
+            background: white;
+            font-size: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .comment-btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            background: black;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .comment-card {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .comment-text {
+            font-size: 17px;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        .comment-meta {
+            color: #777;
+            font-size: 14px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .favorite-btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            background: #ef4444;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .favorite-btn:hover {
+            opacity: 0.9;
+        }
     </style>
-
 </head>
 
 <body>
-
     <div class="container">
-
-        <a
-            href="./main_page.html"
-            class="back-btn"
-        >
-            ← Geri Dön
+        <a href="./main_page.html" class="back-btn">
+            Geri Dön
         </a>
-
         <div id="placeDetail"></div>
-
         <div id="map"></div>
-
         <div class="comments-section">
-
             <h2 class="comments-title">
                 Yorumlar
             </h2>
-
             <div class="comment-form">
 
-                <input
-                    type="text"
-                    id="commentInput"
-                    class="comment-input"
-                    placeholder="Yorum yaz..."
-                />
-
-                <button
-                    id="commentBtn"
-                    class="comment-btn"
-                >
+                <input type="text" id="commentInput" class="comment-input" placeholder="Yorum yaz..."/>
+                <button id="commentBtn" class="comment-btn">
                     Gönder
                 </button>
-
             </div>
-
-            <div
-                id="commentsList"
-                class="comments-list"
-            ></div>
-
+            <div id="commentsList" class="comments-list"></div>
         </div>
-
     </div>
 
     <script type="module">
-
-        import { getPlaceById, getPlaceComments, createComment} from "../scripts/api.js";
-
+        import { getPlaceById, getPlaceComments, createComment, addPlaceToFavorites} from "../scripts/api.js";
         const container = document.getElementById("placeDetail");
-
         const params = new URLSearchParams(window.location.search);
-
         const placeId = params.get("id");
-
         const commentsList = document.getElementById("commentsList");
-
         const commentInput = document.getElementById("commentInput");
-
         const commentBtn = document.getElementById("commentBtn");
-
         /* =========================
         CREATE COMMENT
         ========================= */
-
         commentBtn.addEventListener("click", async () => {
-
             const text = commentInput.value.trim();
-
             if (!text) {
                 return;
             }
-
             try {
-
                 await createComment(placeId, text);
-
                 commentInput.value = "";
-
                 loadComments();
-
             } catch (error) {
-
                 console.error(error);
-
                 alert("Yorum eklenemedi");
             }
         });
@@ -211,202 +203,146 @@
         ========================= */
 
         async function loadComments() {
-
             try {
-
                 const comments = await getPlaceComments(placeId);
-
                 commentsList.innerHTML = "";
-
                 if (!comments.length) {
-
                     commentsList.innerHTML = `
                         <p>Henüz yorum yok</p>
                     `;
-
                     return;
                 }
 
                 comments.forEach(comment => {
-
                     const commentCard = document.createElement("div");
-
                     commentCard.className = "comment-card";
-
                     commentCard.innerHTML = `
                         <p class="comment-text">
                             ${comment.title}
                         </p>
-
                         <p class="comment-meta">
                             ${new Date(comment.created_at).toLocaleString()}
                         </p>
                     `;
-
                     commentsList.appendChild(commentCard);
                 });
-
             } catch (error) {
-
                 console.error(error);
             }
         }
-
         async function loadPlaceDetail() {
-
             try {
-
                 const place = await getPlaceById(placeId);
-
                 container.innerHTML = `
                     <div class="card">
-
-                        <img
-                            src="http://127.0.0.1:8000/${place.image_path}"
-                            class="image"
-                            alt="${place.title}"
-                        />
-
+                        <img src="http://127.0.0.1:8000/${place.image_path}" class="image" alt="${place.title}"/>
                         <div class="content">
-
                             <h1 class="title">
                                 ${place.title}
                             </h1>
-
                             <p class="description">
                                 ${place.description}
                             </p>
-
                             <p class="info">
                                 <strong>Adres:</strong>
                                 ${place.address}
                             </p>
-
                             <p class="info">
                                 <strong>Fiyat:</strong>
                                 ${place.price}
                             </p>
-
                             <p class="info">
                                 <strong>Latitude:</strong>
                                 ${place.latitude}
                             </p>
-
                             <p class="info">
                                 <strong>Longitude:</strong>
                                 ${place.longitude}
                             </p>
-
                             <p class="info">
                                 <strong>Eklenme Tarihi:</strong>
                                 ${new Date(place.created_at).toLocaleString()}
                             </p>
-
-                            <a
-                                href="${place.link}"
-                                target="_blank"
-                                class="map-btn"
-                            >
-                                Google Maps Aç
-                            </a>
-
+                            <div class="action-buttons">
+                                <a href="${place.link}" target="_blank" class="map-btn">
+                                    Google Maps Aç
+                                </a>
+                                <button class="favorite-btn" id="favoriteBtn">
+                                    ❤️ Favorilere Ekle
+                                </button>
+                            </div>
                         </div>
-
                     </div>
                 `;
-
                 initializeMap(place);
+                const favoriteBtn = document.getElementById("favoriteBtn");
+
+                favoriteBtn.addEventListener("click", async () => {
+                    try {
+                        await addPlaceToFavorites(placeId);
+                        favoriteBtn.innerHTML = "Favorilere Kaydedildi";
+                        favoriteBtn.disabled = true;
+                    } catch (error) {
+                        console.error(error);
+                        alert("Favorilere eklenemedi");
+                    }
+                });
 
             } catch (error) {
-
                 console.error(error);
-
                 container.innerHTML = `
                     <h2>Mekan yüklenemedi</h2>
                 `;
             }
         }
-
         /* =========================
            MAP
         ========================= */
 
         function initializeMap(place) {
-
             const destinationLat = place.latitude;
             const destinationLng = place.longitude;
-
             const map = L.map("map").setView(
                 [destinationLat, destinationLng],
                 14
             );
-
             L.tileLayer(
                 "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
                     attribution: "&copy; OpenStreetMap contributors"
                 }
             ).addTo(map);
-
             /* PLACE MARKER */
-
-            L.marker([destinationLat, destinationLng])
-                .addTo(map)
-                .bindPopup(place.title)
-                .openPopup();
+            L.marker([destinationLat, destinationLng]).addTo(map).bindPopup(place.title).openPopup();
 
             /* USER LOCATION */
 
             navigator.geolocation.getCurrentPosition(
-
                 (position) => {
-
                     const userLat = position.coords.latitude;
                     const userLng = position.coords.longitude;
-
                     /* USER MARKER */
-
-                    L.marker([userLat, userLng])
-                        .addTo(map)
-                        .bindPopup("Sizin Konumunuz");
-
+                    L.marker([userLat, userLng]).addTo(map).bindPopup("Sizin Konumunuz");
                     /* ROUTE */
-
                     L.Routing.control({
-
                         waypoints: [
                             L.latLng(userLat, userLng),
                             L.latLng(destinationLat, destinationLng)
                         ],
-
                         routeWhileDragging: false,
-
                         show: false,
-
                         addWaypoints: false,
-
                         draggableWaypoints: false,
-
                         fitSelectedRoutes: true
-
                     }).addTo(map);
-
                 },
-
                 (error) => {
-
                     console.error("Konum alınamadı:", error);
-
                 }
-
             );
         }
-
         loadPlaceDetail();
         loadComments();
-
     </script>
-
 </body>
-
 </html>
