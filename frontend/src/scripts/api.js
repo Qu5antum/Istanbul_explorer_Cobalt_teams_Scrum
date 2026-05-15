@@ -100,3 +100,26 @@ export async function getPlaceById(placeId) {
         headers: getHeaders(null)
     });
 }
+
+/* =========================
+   COMMENTS
+========================= */
+
+export async function getPlaceComments(placeId) {
+    return request(`/place/${placeId}/comment/`, {
+        headers: getHeaders(null)
+    });
+}
+
+export async function createComment(placeId, title) {
+
+    return request(`/place/${placeId}/comment/create/`, {
+        method: "POST",
+
+        headers: getHeaders(),
+
+        body: JSON.stringify({
+            title
+        })
+    });
+}

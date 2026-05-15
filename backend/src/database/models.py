@@ -41,6 +41,11 @@ class User(Base):
         default=uuid.uuid4
     )
 
+    comments: Mapped[list["Comment"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
     email: Mapped[str] = mapped_column(nullable=False, unique=True)
     phone_number: Mapped[str] = mapped_column(nullable=True, unique=True)
     password: Mapped[str] = mapped_column(nullable=False)
@@ -112,6 +117,16 @@ class Comment(Base):
     )
 
     place: Mapped["Place"] = relationship(
+        back_populates="comments"
+    )
+
+    user_id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id"),
+        nullable=False
+    )
+
+    user: Mapped["User"] = relationship(
         back_populates="comments"
     )
 

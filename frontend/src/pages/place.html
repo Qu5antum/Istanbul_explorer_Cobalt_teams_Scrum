@@ -129,17 +129,128 @@
 
         <div id="map"></div>
 
+        <div class="comments-section">
+
+            <h2 class="comments-title">
+                Yorumlar
+            </h2>
+
+            <div class="comment-form">
+
+                <input
+                    type="text"
+                    id="commentInput"
+                    class="comment-input"
+                    placeholder="Yorum yaz..."
+                />
+
+                <button
+                    id="commentBtn"
+                    class="comment-btn"
+                >
+                    Gönder
+                </button>
+
+            </div>
+
+            <div
+                id="commentsList"
+                class="comments-list"
+            ></div>
+
+        </div>
+
     </div>
 
     <script type="module">
 
-        import { getPlaceById } from "../scripts/api.js";
+        import { getPlaceById, getPlaceComments, createComment} from "../scripts/api.js";
 
         const container = document.getElementById("placeDetail");
 
         const params = new URLSearchParams(window.location.search);
 
         const placeId = params.get("id");
+
+        const commentsList = document.getElementById("commentsList");
+
+        const commentInput = document.getElementById("commentInput");
+
+        const commentBtn = document.getElementById("commentBtn");
+
+        /* =========================
+        CREATE COMMENT
+        ========================= */
+
+        commentBtn.addEventListener("click", async () => {
+
+            const text = commentInput.value.trim();
+
+            if (!text) {
+                return;
+            }
+
+            try {
+
+                await createComment(placeId, text);
+
+                commentInput.value = "";
+
+                loadComments();
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert("Yorum eklenemedi");
+            }
+        });
+
+        /* =========================
+        LOAD COMMENTS
+        ========================= */
+
+        async function loadComments() {
+
+            try {
+
+                const comments = await getPlaceComments(placeId);
+
+                commentsList.innerHTML = "";
+
+                if (!comments.length) {
+
+                    commentsList.innerHTML = `
+                        <p>Henüz yorum yok</p>
+                    `;
+
+                    return;
+                }
+
+                comments.forEach(comment => {
+
+                    const commentCard = document.createElement("div");
+
+                    commentCard.className = "comment-card";
+
+                    commentCard.innerHTML = `
+                        <p class="comment-text">
+                            ${comment.title}
+                        </p>
+
+                        <p class="comment-meta">
+                            ${new Date(comment.created_at).toLocaleString()}
+                        </p>
+                    `;
+
+                    commentsList.appendChild(commentCard);
+                });
+
+            } catch (error) {
+
+                console.error(error);
+            }
+        }
 
         async function loadPlaceDetail() {
 
@@ -292,6 +403,7 @@
         }
 
         loadPlaceDetail();
+        loadComments();
 
     </script>
 
