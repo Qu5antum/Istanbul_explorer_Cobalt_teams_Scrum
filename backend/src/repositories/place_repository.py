@@ -1,7 +1,7 @@
 from sqlalchemy import select, or_
 from sqlalchemy.orm import selectinload
 
-from src.database.models import Place, Category
+from src.database.models import Place, Category, User, FavoritePlace
 from .base_repository import BaseRepository
 
 
@@ -48,3 +48,12 @@ class PlaceRepository(BaseRepository):
         await self.session.commit()
         
         return place
+    
+    async def get_favorite_places_with_id(self, user: User):
+        result = await self.session.execute(
+            select(self.model)
+            .join(FavoritePlace)
+            .where(FavoritePlace.user_id == user.id)
+        )
+
+        return result.scalars().all()

@@ -1,4 +1,4 @@
-from sqlalchemy import DateTime, ForeignKey, Table, Column
+from sqlalchemy import DateTime, ForeignKey, Table, Column, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
 from sqlalchemy.dialects.postgresql import UUID
 from enum import Enum
@@ -135,4 +135,36 @@ class Comment(Base):
         default=lambda: datetime.datetime.now(datetime.UTC), 
         index=True
     )
+
+
+class FavoritePlace(Base):
+    __tablename__ = "favorite_places"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id",
+            "place_id",
+            name="uq_user_place_favorite"
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+
+    user_id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    place_id: Mapped[int] = mapped_column(
+        ForeignKey("places.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), 
+        default=lambda: datetime.datetime.now(datetime.UTC), 
+        index=True
+    )
+
 
