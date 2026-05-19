@@ -555,6 +555,14 @@ body{
                                 <strong>Longitude:</strong>
                                 ${place.longitude}
                             </p>
+                            <p class="card-info">
+                                <strong>Mesafe:</strong>
+                                ${
+                                    place.distance
+                                        ? formatDistance(place.distance)
+                                        : "Bilinmiyor"
+                                }
+                            </p>
                             <p class="info">
                                 <strong>Eklenme Tarihi:</strong>
                                 ${new Date(place.created_at).toLocaleString()}
@@ -636,6 +644,19 @@ body{
                     console.error("Konum alınamadı:", error);
                 }
             );
+        }
+        function formatDistance(distance) {
+
+            if (!distance && distance !== 0) {
+                return "Bilinmiyor";
+            }
+
+            if (distance < 1) {
+
+                return `${Math.round(distance * 1000)} m`;
+            }
+
+            return `${distance.toFixed(1)} km`;
         }
         loadPlaceDetail();
         loadComments();

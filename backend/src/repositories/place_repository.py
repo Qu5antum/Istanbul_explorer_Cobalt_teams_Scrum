@@ -1,4 +1,4 @@
-from sqlalchemy import select, or_, and_
+from sqlalchemy import select, or_, and_, func
 from sqlalchemy.orm import selectinload
 
 from src.database.models import Place, Category, User, FavoritePlace
@@ -66,8 +66,31 @@ class PlaceRepository(BaseRepository):
         radius: float = 0.05,
         category_id: int = None
     ):
+        distance = (
+            6371 *
+            func.acos(
+                func.cos(func.radians(lat))
+                *
+                func.cos(func.radians(self.model.latitude))
+                *
+                func.cos(
+                    func.radians(self.model.longitude)
+                    -
+                    func.radians(lng)
+                )
+                +
+                func.sin(func.radians(lat))
+                *
+                func.sin(func.radians(self.model.latitude))
+            )
+        ).label("distance")
+        
         query = (
-            select(self.model).where(
+            select(
+                self.model,
+                distance
+            )
+            .where(
                 and_(
                     self.model.latitude.between(
                         lat - radius,
@@ -79,16 +102,23 @@ class PlaceRepository(BaseRepository):
                     )
                 )
             )
+            .order_by(distance.asc())
         )
-
         if category_id:
             query = (
                 query
-                .options(selectinload(self.model.categories))
+                .options(
+                    selectinload(self.model.categories)
+                )
                 .join(self.model.categories)
                 .where(Category.id == category_id)
             )
-        
         result = await self.session.execute(query)
-
-        return result.scalars().all()
+        rows = result.all()
+        return [
+            {
+                **place.__dict__,
+                "distance": round(distance_value, 2)
+            }
+            for place, distance_value in rows
+        ]

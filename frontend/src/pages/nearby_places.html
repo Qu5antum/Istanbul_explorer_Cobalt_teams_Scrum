@@ -419,6 +419,10 @@ body{
                             <strong>Fiyat:</strong>
                             ${place.price}
                         </p>
+                        <p class="card-info">
+                            <strong>Mesafe:</strong>
+                            ${formatDistance(place.distance)}
+                        </p>
                     </div>
                 `;
                 card.addEventListener("click", () => {
@@ -515,21 +519,13 @@ body{
                 /* CATEGORY BUTTONS */
 
                 categories.forEach(category => {
-
-                    const button =
-                        document.createElement("button");
-
+                    const button = document.createElement("button");
                     button.className = "category-btn";
-
-                    button.textContent =
-                        category.title;
-
+                    button.textContent = category.title;
                     button.addEventListener(
                         "click",
                         async () => {
-
                             try {
-
                                 setActiveCategory(button);
 
                                 const places =
@@ -538,11 +534,8 @@ body{
                                         currentLat,
                                         currentLng
                                     );
-
                                 renderPlaces(places);
-
                             } catch (error) {
-
                                 console.error(error);
                             }
                         }
@@ -550,9 +543,7 @@ body{
 
                     categoriesContainer.appendChild(button);
                 });
-
             } catch (error) {
-
                 console.error(error);
             }
         }
@@ -562,7 +553,6 @@ body{
         ========================= */
 
         function setActiveCategory(activeButton) {
-
             const buttons =
                 document.querySelectorAll(
                     ".category-btn"
@@ -573,6 +563,17 @@ body{
             });
 
             activeButton.classList.add("active");
+        }
+
+        function formatDistance(distance) {
+            if (distance < 1) {
+                return `
+                    ${Math.round(distance * 1000)} m
+                `;
+            }
+            return `
+                ${distance.toFixed(1)} km
+            `;
         }
         
         loadNearbyPlaces();
