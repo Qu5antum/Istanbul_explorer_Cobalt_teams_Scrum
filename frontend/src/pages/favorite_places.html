@@ -5,111 +5,314 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Favori Mekanlar</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        body {
-            background: #f3f4f6;
-            padding: 40px;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 32px;
-        }
-        .title {
-            font-size: 42px;
-            font-weight: 700;
-        }
-        .back-btn {
-            text-decoration: none;
-            color: black;
-            font-weight: 600;
-        }
-        .places-grid {
-            display: grid;
-            grid-template-columns: repeat(
-                auto-fill,
-                minmax(320px, 1fr)
-            );
-            gap: 24px;
-        }
-        .card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            transition: 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-4px);
-        }
-        .card-image {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-        }
-        .card-body {
-            padding: 20px;
-        }
-        .card-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-        .card-description {
-            color: #555;
-            line-height: 1.5;
-            margin-bottom: 16px;
-        }
-        .card-info {
-            margin-bottom: 10px;
-            font-size: 15px;
-        }
-        .actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-        .detail-btn,
-        .remove-btn {
-            flex: 1;
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            text-decoration: none;
-            text-align: center;
-        }
-        .detail-btn {
-            background: black;
-            color: white;
-        }
-        .remove-btn {
-            background: #ef4444;
-            color: white;
-        }
-        .empty-box {
-            margin-top: 100px;
-            text-align: center;
-        }
-        .empty-title {
-            font-size: 32px;
-            margin-bottom: 14px;
-        }
-        .empty-text {
-            color: #666;
-            font-size: 18px;
-        }
+        *{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Inter,Arial,sans-serif;
+}
+
+body{
+
+    background:#0f172a;
+
+    color:white;
+
+    padding:40px;
+
+    overflow-x:hidden;
+
+    background-image:
+    radial-gradient(circle at top left,#2563eb33,transparent 25%),
+    radial-gradient(circle at bottom right,#7c3aed33,transparent 25%);
+}
+
+
+/* CONTAINER */
+
+.container{
+
+    max-width:1400px;
+
+    margin:auto;
+}
+
+
+/* TOPBAR */
+
+.topbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:40px;
+
+    flex-wrap:wrap;
+
+    gap:20px;
+}
+
+
+/* TITLE */
+
+.title{
+
+    font-size:52px;
+
+    font-weight:800;
+
+    background:linear-gradient(to right,#60a5fa,#c084fc);
+
+    -webkit-background-clip:text;
+
+    -webkit-text-fill-color:transparent;
+}
+
+
+/* BACK BUTTON */
+
+.back-btn{
+
+    text-decoration:none;
+
+    padding:14px 22px;
+
+    border-radius:16px;
+
+    background:rgba(255,255,255,0.08);
+
+    backdrop-filter:blur(10px);
+
+    color:white;
+
+    font-weight:700;
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    transition:0.3s;
+}
+
+.back-btn:hover{
+
+    transform:translateY(-4px);
+
+    background:#2563eb;
+}
+
+
+/* GRID */
+
+.places-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fill,minmax(330px,1fr));
+
+    gap:30px;
+}
+
+
+/* CARD */
+
+.card{
+
+    background:rgba(255,255,255,0.08);
+
+    border-radius:28px;
+
+    overflow:hidden;
+
+    backdrop-filter:blur(14px);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    transition:0.4s;
+}
+
+.card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:0 20px 40px rgba(0,0,0,0.35);
+}
+
+
+/* IMAGE */
+
+.card-image{
+
+    width:100%;
+
+    height:240px;
+
+    object-fit:cover;
+}
+
+
+/* BODY */
+
+.card-body{
+
+    padding:24px;
+}
+
+
+/* TITLE */
+
+.card-title{
+
+    font-size:28px;
+
+    font-weight:800;
+
+    margin-bottom:14px;
+
+    color:white;
+}
+
+
+/* DESCRIPTION */
+
+.card-description{
+
+    color:#cbd5e1;
+
+    line-height:1.7;
+
+    margin-bottom:16px;
+}
+
+
+/* INFO */
+
+.card-info{
+
+    margin-bottom:10px;
+
+    font-size:15px;
+
+    color:#e2e8f0;
+}
+
+
+/* ACTIONS */
+
+.actions{
+
+    display:flex;
+
+    gap:12px;
+
+    margin-top:24px;
+}
+
+
+/* BUTTONS */
+
+.detail-btn,
+.remove-btn{
+
+    flex:1;
+
+    border:none;
+
+    padding:14px;
+
+    border-radius:16px;
+
+    cursor:pointer;
+
+    font-weight:700;
+
+    text-decoration:none;
+
+    text-align:center;
+
+    transition:0.3s;
+}
+
+
+/* DETAIL */
+
+.detail-btn{
+
+    background:linear-gradient(to right,#2563eb,#7c3aed);
+
+    color:white;
+}
+
+.detail-btn:hover{
+
+    transform:translateY(-3px);
+}
+
+
+/* REMOVE */
+
+.remove-btn{
+
+    background:#ef4444;
+
+    color:white;
+}
+
+.remove-btn:hover{
+
+    background:#dc2626;
+
+    transform:translateY(-3px);
+}
+
+
+/* EMPTY */
+
+.empty-box{
+
+    margin-top:120px;
+
+    text-align:center;
+}
+
+.empty-title{
+
+    font-size:38px;
+
+    margin-bottom:18px;
+}
+
+.empty-text{
+
+    color:#cbd5e1;
+
+    font-size:18px;
+}
+
+
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+    .title{
+
+        font-size:38px;
+    }
+
+    .topbar{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+    }
+
+    .actions{
+
+        flex-direction:column;
+    }
+}
     </style>
 </head>
 <body>
