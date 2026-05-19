@@ -4,7 +4,7 @@ from src.database.db import AsyncSession, get_session
 from src.database.models import UserRole, User
 from src.services.comment_service import CommentService
 from src.api.dependencies.require_role_dependency import require_roles
-from src.api.schemas.comment_schema import CommentCreate
+from src.api.schemas.comment_schema import CommentCreate, CommentResponse
 
 comment_router = APIRouter(
     prefix="/api",
@@ -26,7 +26,7 @@ async def create_comment(
     return await comment_service.create_comment(data=data, place_id=place_id, user=user)
 
 
-@comment_router.get("/place/{place_id}/comment/", status_code=200)
+@comment_router.get("/place/{place_id}/comment/", response_model=list[CommentResponse], status_code=200)
 async def get_comments(
     place_id: int,
     user: User = Depends(require_roles(UserRole.USER, UserRole.ADMIN)),

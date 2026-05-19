@@ -201,7 +201,6 @@
         /* =========================
         LOAD COMMENTS
         ========================= */
-
         async function loadComments() {
             try {
                 const comments = await getPlaceComments(placeId);
@@ -212,16 +211,23 @@
                     `;
                     return;
                 }
-
                 comments.forEach(comment => {
                     const commentCard = document.createElement("div");
-                    commentCard.className = "comment-card";
+                    commentCard.className =
+                        "comment-card";
                     commentCard.innerHTML = `
+                        <div class="comment-header">
+                            <p class="comment-user">
+                                @${comment.user.email}
+                            </p>
+                            <p class="comment-meta">
+                                ${new Date(
+                                    comment.created_at
+                                ).toLocaleString()}
+                            </p>
+                        </div>
                         <p class="comment-text">
                             ${comment.title}
-                        </p>
-                        <p class="comment-meta">
-                            ${new Date(comment.created_at).toLocaleString()}
                         </p>
                     `;
                     commentsList.appendChild(commentCard);

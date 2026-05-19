@@ -26,3 +26,15 @@ class FavoritePlaceRepository(BaseRepository):
         await self.session.commit()
 
         return favorite_place
+    
+
+    async def get_favorite_places_of_user(self, user: User, place_id: int):
+        result = await self.session.execute(
+            select(self.model)
+            .where(
+                self.model.user_id == user.id,
+                self.model.place_id == place_id
+            )
+        )
+
+        return result.scalar_one_or_none()

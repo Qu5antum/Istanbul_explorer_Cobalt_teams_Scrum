@@ -4,7 +4,7 @@ from src.database.db import AsyncSession
 from src.database.models import User
 from src.repositories.place_repository import PlaceRepository
 from src.repositories.favorite_place_repository import FavoritePlaceRepository
-from src.exception_handlers.place_exception import PlaceNotFoundException
+from src.exception_handlers.place_exception import PlaceNotFoundException, PlaceAlreadyInFavorite
 from src.exception_handlers.db_exception import DatabaseException
 
 
@@ -20,6 +20,14 @@ class FavoritePlaceService:
 
         if not place:
             raise PlaceNotFoundException("Konum bulunmadı")
+        
+        existiting_in_favorite = await self.favorite_repo.get_favorite_places_of_user(
+            user=user, 
+            place_id=place_id
+        )
+
+        if existiting_in_favorite:
+            raise PlaceAlreadyInFavorite("Konum zaten favorilerde")
         
         try:
             new_favorite = await self.favorite_repo.create(

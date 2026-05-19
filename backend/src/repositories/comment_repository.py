@@ -10,6 +10,7 @@ class CommentRepository(BaseRepository):
     async def get_comments_by_place(self, place_id: int):
         result = await self.session.execute(
             select(self.model)
+            .options(selectinload(self.model.user))
             .join(self.model.place)
             .where(self.model.place_id == place_id)
         )
