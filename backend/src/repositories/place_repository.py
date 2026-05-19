@@ -1,4 +1,4 @@
-from sqlalchemy import select, or_
+from sqlalchemy import select, or_, and_
 from sqlalchemy.orm import selectinload
 
 from src.database.models import Place, Category, User, FavoritePlace
@@ -55,5 +55,40 @@ class PlaceRepository(BaseRepository):
             .join(FavoritePlace)
             .where(FavoritePlace.user_id == user.id)
         )
+
+        return result.scalars().all()
+    
+
+    async def get_nearby_places(
+        self,
+        lat: float,
+        lng: float,
+        radius: float = 0.05,
+        category_id: int = None
+    ):
+        query = (
+            select(self.model).where(
+                and_(
+                    self.model.latitude.between(
+                        lat - radius,
+                        lat + radius
+                    ),
+                    self.model.longitude.between(
+                        lng - radius,
+                        lng + radius
+                    )
+                )
+            )
+        )
+
+        if category_id:
+            query = (
+                query
+                .options(selectinload(self.model.categories))
+                .join(self.model.categories)
+                .where(Category.id == category_id)
+            )
+        
+        result = await self.session.execute(query)
 
         return result.scalars().all()

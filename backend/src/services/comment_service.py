@@ -16,7 +16,7 @@ class CommentService:
         self.place_repo = PlaceRepository(session=self.session)
 
     # Yorum ekleme metodu
-    async def create_comment(self, data: CommentCreate, user: User, place_id: int):
+    async def create_comment(self, data: CommentCreate, user: User, place_id: int) -> dict[str, str]:
         place = await self.place_repo.get(id=place_id)
 
         if not place:

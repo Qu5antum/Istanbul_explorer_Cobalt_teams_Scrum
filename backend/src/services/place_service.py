@@ -7,6 +7,7 @@ from src.repositories.place_repository import PlaceRepository
 from src.repositories.category_repository import CategoryRepository
 from src.exception_handlers.db_exception import DatabaseException
 from src.exception_handlers.place_exception import PlaceNotFoundException, PlaceAlreadyExists
+from src.api.schemas.user_schema import UserLocationRequest
 
 
 class PlaceService:
@@ -88,7 +89,11 @@ class PlaceService:
 
         return {"detail": "Konum silindi"}
 
-    
+    # Kullanıcıya yakın olan yerleri bulma metodu
+    async def get_user_nearby_places(self, userLocation: UserLocationRequest, category_id: int = None):
+        nearby_places = await self.place_repo.get_nearby_places(lat=userLocation.lat, lng=userLocation.lng, category_id=category_id)
+
+        return nearby_places
     
 
 

@@ -19,3 +19,8 @@ class UserOut(UserCreate):
 
     class Config:
         from_attributes = True
+
+
+class UserLocationRequest(BaseModel):
+    lat: float
+    lng: float

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Yakındaki Mekanlar</title>
+    <!-- LEAFLET -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: #f3f4f6;
+            padding: 30px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+        }
+        .back-btn {
+            padding: 12px 18px;
+            border-radius: 12px;
+            background: black;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        #map {
+            width: 100%;
+            height: 500px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .places-grid {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fill,
+                minmax(320px, 1fr)
+            );
+            gap: 24px;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .card-description {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+        .card-info {
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        .loading {
+            text-align: center;
+            margin-top: 80px;
+            font-size: 24px;
+        }
+        .categories {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            margin-bottom: 24px;
+            padding-bottom: 10px;
+        }
+        .category-btn {
+            border: none;
+            padding: 12px 18px;
+            border-radius: 999px;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: 0.2s;
+        }
+        .category-btn:hover {
+            background: black;
+            color: white;
+        }
+        .category-btn.active {
+            background: black;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="topbar">
+            <div id="categories" class="categories"></div>
+            <h1 class="title">
+                Yakındaki Mekanlar
+            </h1>
+            <a href="./main_page.html" class="back-btn">
+                Ana Sayfa
+            </a>
+        </div>
+        <div id="map"></div>
+
+        <div
+            id="placesGrid"
+            class="places-grid"
+        ></div>
+
+    </div>
+
+    <script type="module">
+        import {
+            getNearbyPlaces,
+            getNearbyPlacesByCategory,
+            getCategories
+        } from "../scripts/api.js";
+        const placesGrid = document.getElementById("placesGrid");
+        let map;
+        const categoriesContainer = document.getElementById("categories");
+
+        let currentLat = null;
+        let currentLng = null;
+
+        /* =========================
+           INITIALIZE MAP
+        ========================= */
+
+        function initializeMap(lat, lng) {
+            map = L.map("map").setView(
+                [lat, lng],
+                13
+            );
+            L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+                    attribution:
+                        "&copy; OpenStreetMap contributors"
+                }
+            ).addTo(map);
+            /* USER MARKER */
+            L.marker([lat, lng])
+                .addTo(map)
+                .bindPopup("Sizin Konumunuz")
+                .openPopup();
+        }
+
+        /* =========================
+           RENDER PLACES
+        ========================= */
+
+        function renderPlaces(places) {
+            placesGrid.innerHTML = "";
+            if (!places.length) {
+                placesGrid.innerHTML = `
+                    <h2>
+                        Yakında mekan bulunamadı
+                    </h2>
+                `;
+                return;
+            }
+            places.forEach(place => {
+
+                /* MAP MARKER */
+
+                L.marker([
+                    place.latitude,
+                    place.longitude
+                ]).addTo(map).bindPopup(place.title);
+
+                /* CARD */
+
+                const card = document.createElement("div");
+                card.className = "card";
+                card.innerHTML = `
+                    <img
+                        src="http://127.0.0.1:8000/${place.image_path}" class="card-image" alt="${place.title}"/>
+                    <div class="card-body">
+                        <h2 class="card-title">
+                            ${place.title}
+                        </h2>
+                        <p class="card-description">
+                            ${place.description}
+                        </p>
+                        <p class="card-info">
+                            <strong>Adres:</strong>
+                            ${place.address}
+                        </p>
+                        <p class="card-info">
+                            <strong>Fiyat:</strong>
+                            ${place.price}
+                        </p>
+                    </div>
+                `;
+                card.addEventListener("click", () => {
+                    window.location.href =
+                        `place.html?id=${place.id}`;
+                });
+                placesGrid.appendChild(card);
+            });
+        }
+
+        /* =========================
+           LOAD NEARBY PLACES
+        ========================= */
+
+        async function loadNearbyPlaces() {
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+
+                    try {
+                        currentLat = position.coords.latitude;
+                        currentLng = position.coords.longitude;
+                        initializeMap(
+                            currentLat,
+                            currentLng
+                        );
+                        await loadCategories();
+                        const places =
+                            await getNearbyPlaces(
+                                currentLat,
+                                currentLng
+                            );
+
+                        renderPlaces(places);
+                    } catch (error) {
+                        console.error(error);
+                        placesGrid.innerHTML = `
+                            <h2>
+                                Mekanlar yüklenemedi
+                            </h2>
+                        `;
+                    }
+                },
+                (error) => {
+                    console.error(error);
+                    placesGrid.innerHTML = `
+                        <h2>
+                            Konum erişimi reddedildi
+                        </h2>
+                    `;
+                }
+            );
+        }
+        /* =========================
+        LOAD CATEGORIES
+        ========================= */
+
+        async function loadCategories() {
+
+            try {
+
+                const categories =
+                    await getCategories();
+
+                categoriesContainer.innerHTML = "";
+
+                /* ALL BUTTON */
+
+                const allButton =
+                    document.createElement("button");
+
+                allButton.className =
+                    "category-btn active";
+
+                allButton.textContent = "Tümü";
+
+                allButton.addEventListener(
+                    "click",
+                    async () => {
+
+                        setActiveCategory(allButton);
+
+                        const places =
+                            await getNearbyPlaces(
+                                currentLat,
+                                currentLng
+                            );
+
+                        renderPlaces(places);
+                    }
+                );
+
+                categoriesContainer.appendChild(allButton);
+
+                /* CATEGORY BUTTONS */
+
+                categories.forEach(category => {
+
+                    const button =
+                        document.createElement("button");
+
+                    button.className = "category-btn";
+
+                    button.textContent =
+                        category.title;
+
+                    button.addEventListener(
+                        "click",
+                        async () => {
+
+                            try {
+
+                                setActiveCategory(button);
+
+                                const places =
+                                    await getNearbyPlacesByCategory(
+                                        category.id,
+                                        currentLat,
+                                        currentLng
+                                    );
+
+                                renderPlaces(places);
+
+                            } catch (error) {
+
+                                console.error(error);
+                            }
+                        }
+                    );
+
+                    categoriesContainer.appendChild(button);
+                });
+
+            } catch (error) {
+
+                console.error(error);
+            }
+        }
+
+        /* =========================
+        ACTIVE CATEGORY
+        ========================= */
+
+        function setActiveCategory(activeButton) {
+
+            const buttons =
+                document.querySelectorAll(
+                    ".category-btn"
+                );
+
+            buttons.forEach(button => {
+                button.classList.remove("active");
+            });
+
+            activeButton.classList.add("active");
+        }
+        
+        loadNearbyPlaces();
+    </script>
+</body>
+</html>

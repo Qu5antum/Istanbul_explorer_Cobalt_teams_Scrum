@@ -14,7 +14,8 @@ class FavoritePlaceService:
         self.place_repo = PlaceRepository(session=self.session)
         self.favorite_repo = FavoritePlaceRepository(session=self.session)
 
-    async def add_place_to_favorite(self, user: User, place_id: int):
+    # konumu favoriye ekleme 
+    async def add_place_to_favorite(self, user: User, place_id: int) -> dict[str, str]:
         place = await self.place_repo.get(id=place_id)
 
         if not place:
@@ -33,7 +34,8 @@ class FavoritePlaceService:
         
         return {"detail": "Favoriye eklendi"}
     
-    async def delete_favorite_place(self, user: User, place_id: int):
+    # favorilerden sil
+    async def delete_favorite_place(self, user: User, place_id: int) -> dict[str, str]:
         place = await self.place_repo.get(id=place_id)
 
         if not place:
@@ -49,6 +51,7 @@ class FavoritePlaceService:
         
         return {"detail": "Favorilerinden silindi"}
     
+    # favori konumları veritabandan al
     async def get_favorite_places(self, user: User):
         favorite_places = await self.place_repo.get_favorite_places_with_id(
             user=user

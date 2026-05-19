@@ -141,3 +141,39 @@ export async function removeFavoritePlace(placeId) {
         headers: getHeaders(null)
     });
 }
+
+/* =========================
+   NEARBY PLACES
+========================= */
+export async function getNearbyPlaces(lat, lng) {
+    return request("/place/nearby", {
+        method: "POST",
+        headers: getHeaders(),
+        body: JSON.stringify({
+            lat,
+            lng
+        })
+    });
+}
+
+/* =========================
+   NEARBY BY CATEGORY
+========================= */
+
+export async function getNearbyPlacesByCategory(
+    categoryId,
+    lat,
+    lng
+) {
+    return request(
+        `/place/nearby/category/${categoryId}`,
+        {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify({
+                lat,
+                lng
+            })
+        }
+    );
+}
