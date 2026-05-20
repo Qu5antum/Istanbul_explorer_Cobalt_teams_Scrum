@@ -4,7 +4,7 @@ from src.database.db import AsyncSession, get_session
 from src.database.models import User, UserRole
 from src.services.place_service import PlaceService
 from src.api.dependencies.require_role_dependency import require_roles
-from src.api.schemas.place_schema import PlaceCreate
+from src.api.schemas.place_schema import PlaceCreate, PlaceUpdate
 from src.api.schemas.user_schema import UserLocationRequest
 
 
@@ -33,6 +33,15 @@ async def get_all_places(
     return await place_service.get_all_places()
 
 
+@places_route.post("/place/nearby", status_code=200)
+async def get_nearby_places(
+    userLocation: UserLocationRequest,
+    user: User = Depends(require_roles(UserRole.USER, UserRole.ADMIN)),
+    place_service: PlaceService = Depends(get_place_service)
+):
+    return await place_service.get_user_nearby_places(userLocation=userLocation)
+
+
 @places_route.post("/place/{place_id}", status_code=200)
 async def get_place_by_id(
     place_id: int,
@@ -41,6 +50,16 @@ async def get_place_by_id(
     place_service: PlaceService = Depends(get_place_service)
 ):
     return await place_service.get_place_by_id(userLocation=userLocation, place_id=place_id)
+
+
+@places_route.put("/admin/place/{place_id}/update", status_code=200)
+async def update_place(
+    place_id: int,
+    placeUpdate: PlaceUpdate,
+    user: User = Depends(require_roles(UserRole.ADMIN)),
+    place_service: PlaceService = Depends(get_place_service)
+):
+    return await place_service.update_place_with_id(place_id=place_id, placeUpdate=placeUpdate)
 
 
 @places_route.get("/search/{title}", status_code=200)
@@ -68,15 +87,6 @@ async def delete_place(
     place_service: PlaceService = Depends(get_place_service)
 ):
     return await place_service.delete_place_with_id(place_id=place_id)
-
-
-@places_route.post("/place/nearby", status_code=200)
-async def get_nearby_places(
-    userLocation: UserLocationRequest,
-    user: User = Depends(require_roles(UserRole.USER, UserRole.ADMIN)),
-    place_service: PlaceService = Depends(get_place_service)
-):
-    return await place_service.get_user_nearby_places(userLocation=userLocation)
 
 
 @places_route.post("/place/nearby/category/{category_id}", status_code=200)

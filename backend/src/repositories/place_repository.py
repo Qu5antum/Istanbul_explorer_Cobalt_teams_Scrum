@@ -38,6 +38,15 @@ class PlaceRepository(BaseRepository):
 
         return result.scalars().all()
     
+    async def get_place_with_category(self, place_id: int):
+        result = await self.session.execute(
+            select(self.model)
+            .options(selectinload(self.model.categories))
+            .where(self.model.id == place_id)
+        )
+
+        return result.scalar_one_or_none()
+    
     async def delete_place_by_id(self, place_id: int):
         place = await self.session.get(self.model, place_id)
 
@@ -178,13 +187,3 @@ class PlaceRepository(BaseRepository):
             "created_at": place.created_at,
             "distance": round(distance_value, 2)
         }
-
-
-        
-    
-    
-  
-
-
-        
-        

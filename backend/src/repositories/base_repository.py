@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-from sqlalchemy import select
-from uuid import UUID
+from sqlalchemy import select, update
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -35,7 +34,7 @@ class BaseRepository(AbstractRepository):
             self.session.add(new_object)
 
             return new_object
-        except:
+        except Exception:
             await self.session.rollback()
             raise
 
@@ -57,4 +56,20 @@ class BaseRepository(AbstractRepository):
         )
 
         return result.scalar_one_or_none()
+    
+    async def update(self, id: int, data: dict):
+        obj = await self.session.get(self.model, id)
+  
+        try:
+            if obj: 
+                for key, value in data.items():
+                    if hasattr(obj, key):
+                        setattr(obj, key, value)
+
+            return obj
+
+        except Exception:
+            await self.session.rollback()
+            raise
+
         

@@ -1,8 +1,9 @@
 from typing import Any
+from sqlalchemy.exc import IntegrityError
 
 from src.database.db import AsyncSession
 from src.database.models import Place
-from src.api.schemas.place_schema import PlaceCreate
+from src.api.schemas.place_schema import PlaceCreate, PlaceUpdate
 from src.repositories.place_repository import PlaceRepository
 from src.repositories.category_repository import CategoryRepository
 from src.exception_handlers.db_exception import DatabaseException
@@ -90,10 +91,49 @@ class PlaceService:
         return {"detail": "Konum silindi"}
 
     # Kullanıcıya yakın olan yerleri bulma metodu
-    async def get_user_nearby_places(self, userLocation: UserLocationRequest, category_id: int = None):
+    async def get_user_nearby_places(self, userLocation: UserLocationRequest, category_id: int | None = None):
         nearby_places = await self.place_repo.get_nearby_places(lat=userLocation.lat, lng=userLocation.lng, category_id=category_id)
 
         return nearby_places
+    
+    # Konumu yenileme metodu
+    async def update_place_with_id(self, place_id: int, placeUpdate: PlaceUpdate):
+        try:
+            place = await self.place_repo.get_place_with_category(place_id=place_id)
+
+            if not place:
+                raise PlaceNotFoundException
+            
+            data=placeUpdate.model_dump(exclude_unset=True)
+
+            category_ids = data.pop(
+                "category_ids",
+                None
+            )
+            update_place = await self.place_repo.update(id=place_id, data=data)
+
+            if category_ids is not None:
+                categories = await self.category_repo.get_categories_with_ids(
+                    category_ids=category_ids
+                )
+
+                if len(categories) != len(category_ids):
+                    raise ValueError(
+                        "Bazı kategoriler bulunamadı"
+                    )
+                
+                place.categories = categories
+
+            await self.session.commit()
+            await self.session.refresh(place)
+
+            return update_place
+        except IntegrityError:
+            raise DatabaseException("Veritaban hatası")
+
+
+
+
     
 
 
