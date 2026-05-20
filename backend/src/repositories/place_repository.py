@@ -122,3 +122,69 @@ class PlaceRepository(BaseRepository):
             }
             for place, distance_value in rows
         ]
+    
+    async def get_place_by_id_with_distance(
+        self,
+        lat: float,
+        lng: float,
+        place_id: int
+    ):
+        distance = (
+            6371 *
+            func.acos(
+                func.cos(func.radians(lat))
+                *
+                func.cos(func.radians(self.model.latitude))
+                *
+                func.cos(
+                    func.radians(self.model.longitude)
+                    -
+                    func.radians(lng)
+                )
+                +
+                func.sin(func.radians(lat))
+                *
+                func.sin(func.radians(self.model.latitude))
+            )
+        ).label("distance")
+
+        query = (
+            select(
+                self.model,
+                distance
+            )
+            .where(self.model.id == place_id)
+        )
+
+        result = await self.session.execute(query)
+
+        row = result.first()
+
+        if not row:
+            return None
+
+        place, distance_value = row
+
+        return {
+            "id": place.id,
+            "title": place.title,
+            "description": place.description,
+            "address": place.address,
+            "price": place.price,
+            "latitude": place.latitude,
+            "longitude": place.longitude,
+            "image_path": place.image_path,
+            "link": place.link,
+            "created_at": place.created_at,
+            "distance": round(distance_value, 2)
+        }
+
+
+        
+    
+    
+  
+
+
+        
+        

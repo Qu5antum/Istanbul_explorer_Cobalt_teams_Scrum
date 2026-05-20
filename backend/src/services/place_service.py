@@ -63,8 +63,8 @@ class PlaceService:
 
         return places
     
-    async def get_place_by_id(self, place_id: int) -> (Any | None):
-        place = await self.place_repo.get_object_by_id(id=place_id)
+    async def get_place_by_id(self, userLocation: UserLocationRequest, place_id: int) -> (Any | None):
+        place = await self.place_repo.get_place_by_id_with_distance(lat=userLocation.lat, lng=userLocation.lng, place_id=place_id)
 
         return place
     

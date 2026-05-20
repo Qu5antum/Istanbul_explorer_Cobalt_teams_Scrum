@@ -88,9 +88,21 @@ export async function searchPlace(title) {
     });
 }
 
-export async function getPlaceById(placeId) {
+export async function getPlaceById(
+    placeId,
+    lat,
+    lng
+) {
     return request(`/place/${placeId}`, {
-        headers: getHeaders(null)
+        method: "POST",
+        headers: {
+            ...getHeaders(null),
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            lat,
+            lng
+        })
     });
 }
 
@@ -150,8 +162,8 @@ export async function getNearbyPlaces(lat, lng) {
         method: "POST",
         headers: getHeaders(),
         body: JSON.stringify({
-            lat,
-            lng
+            lat: lat,
+            lng: lng
         })
     });
 }
@@ -171,8 +183,8 @@ export async function getNearbyPlacesByCategory(
             method: "POST",
             headers: getHeaders(),
             body: JSON.stringify({
-                lat,
-                lng
+                lat: lat,
+                lng: lng
             })
         }
     );

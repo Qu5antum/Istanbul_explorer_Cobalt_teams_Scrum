@@ -33,13 +33,14 @@ async def get_all_places(
     return await place_service.get_all_places()
 
 
-@places_route.get("/place/{place_id}", status_code=200)
+@places_route.post("/place/{place_id}", status_code=200)
 async def get_place_by_id(
     place_id: int,
+    userLocation: UserLocationRequest,
     user: User = Depends(require_roles(UserRole.ADMIN)),
     place_service: PlaceService = Depends(get_place_service)
 ):
-    return await place_service.get_place_by_id(place_id=place_id)
+    return await place_service.get_place_by_id(userLocation=userLocation, place_id=place_id)
 
 
 @places_route.get("/search/{title}", status_code=200)

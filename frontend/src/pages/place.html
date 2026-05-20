@@ -13,430 +13,430 @@
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
     <style>
         *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Inter,Arial,sans-serif;
-}
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Inter,Arial,sans-serif;
+        }
 
-body{
+        body{
 
-    background:#0f172a;
+            background:#0f172a;
 
-    color:white;
+            color:white;
 
-    padding:40px;
+            padding:40px;
 
-    overflow-x:hidden;
+            overflow-x:hidden;
 
-    background-image:
-    radial-gradient(circle at top left,#2563eb33,transparent 25%),
-    radial-gradient(circle at bottom right,#7c3aed33,transparent 25%);
-}
+            background-image:
+            radial-gradient(circle at top left,#2563eb33,transparent 25%),
+            radial-gradient(circle at bottom right,#7c3aed33,transparent 25%);
+        }
 
 
-/* CONTAINER */
+        /* CONTAINER */
 
-.container{
+        .container{
 
-    max-width:1200px;
+            max-width:1200px;
 
-    margin:auto;
-}
+            margin:auto;
+        }
 
 
-/* BACK BUTTON */
+        /* BACK BUTTON */
 
-.back-btn{
+        .back-btn{
 
-    display:inline-block;
+            display:inline-block;
 
-    margin-bottom:30px;
+            margin-bottom:30px;
 
-    padding:14px 22px;
+            padding:14px 22px;
 
-    border-radius:16px;
+            border-radius:16px;
 
-    background:rgba(255,255,255,0.08);
+            background:rgba(255,255,255,0.08);
 
-    backdrop-filter:blur(10px);
+            backdrop-filter:blur(10px);
 
-    color:white;
+            color:white;
 
-    text-decoration:none;
+            text-decoration:none;
 
-    font-weight:700;
+            font-weight:700;
 
-    border:1px solid rgba(255,255,255,0.08);
+            border:1px solid rgba(255,255,255,0.08);
 
-    transition:0.3s;
-}
+            transition:0.3s;
+        }
 
-.back-btn:hover{
+        .back-btn:hover{
 
-    transform:translateY(-4px);
+            transform:translateY(-4px);
 
-    background:#2563eb;
-}
+            background:#2563eb;
+        }
 
 
-/* CARD */
+        /* CARD */
 
-.card{
+        .card{
 
-    background:rgba(255,255,255,0.08);
+            background:rgba(255,255,255,0.08);
 
-    border-radius:30px;
+            border-radius:30px;
 
-    overflow:hidden;
+            overflow:hidden;
 
-    backdrop-filter:blur(14px);
+            backdrop-filter:blur(14px);
 
-    border:1px solid rgba(255,255,255,0.08);
+            border:1px solid rgba(255,255,255,0.08);
 
-    box-shadow:0 20px 40px rgba(0,0,0,0.35);
-}
+            box-shadow:0 20px 40px rgba(0,0,0,0.35);
+        }
 
 
-/* IMAGE */
+        /* IMAGE */
 
-.image{
+        .image{
 
-    width:100%;
+            width:100%;
 
-    height:520px;
+            height:520px;
 
-    object-fit:cover;
-}
+            object-fit:cover;
+        }
 
 
-/* CONTENT */
+        /* CONTENT */
 
-.content{
+        .content{
 
-    padding:35px;
-}
+            padding:35px;
+        }
 
 
-/* TITLE */
+        /* TITLE */
 
-.title{
+        .title{
 
-    font-size:52px;
+            font-size:52px;
 
-    font-weight:800;
+            font-weight:800;
 
-    margin-bottom:24px;
+            margin-bottom:24px;
 
-    background:linear-gradient(to right,#60a5fa,#c084fc);
+            background:linear-gradient(to right,#60a5fa,#c084fc);
 
-    -webkit-background-clip:text;
+            -webkit-background-clip:text;
 
-    -webkit-text-fill-color:transparent;
-}
+            -webkit-text-fill-color:transparent;
+        }
 
 
-/* DESCRIPTION */
+        /* DESCRIPTION */
 
-.description{
+        .description{
 
-    color:#cbd5e1;
+            color:#cbd5e1;
 
-    line-height:1.8;
+            line-height:1.8;
 
-    margin-bottom:28px;
+            margin-bottom:28px;
 
-    font-size:18px;
-}
+            font-size:18px;
+        }
 
 
-/* INFO */
+        /* INFO */
 
-.info{
+        .info{
 
-    margin-bottom:14px;
+            margin-bottom:14px;
 
-    font-size:17px;
+            font-size:17px;
 
-    color:#e2e8f0;
-}
+            color:#e2e8f0;
+        }
 
 
-/* BUTTONS */
+        /* BUTTONS */
 
-.action-buttons{
+        .action-buttons{
 
-    display:flex;
+            display:flex;
 
-    gap:14px;
+            gap:14px;
 
-    margin-top:30px;
+            margin-top:30px;
 
-    flex-wrap:wrap;
-}
+            flex-wrap:wrap;
+        }
 
 
-/* MAP BUTTON */
+        /* MAP BUTTON */
 
-.map-btn{
+        .map-btn{
 
-    display:inline-block;
+            display:inline-block;
 
-    padding:15px 22px;
+            padding:15px 22px;
 
-    border-radius:16px;
+            border-radius:16px;
 
-    background:linear-gradient(to right,#2563eb,#7c3aed);
+            background:linear-gradient(to right,#2563eb,#7c3aed);
 
-    color:white;
+            color:white;
 
-    text-decoration:none;
+            text-decoration:none;
 
-    font-weight:700;
+            font-weight:700;
 
-    transition:0.3s;
-}
+            transition:0.3s;
+        }
 
-.map-btn:hover{
+        .map-btn:hover{
 
-    transform:translateY(-4px);
-}
+            transform:translateY(-4px);
+        }
 
 
-/* FAVORITE */
+        /* FAVORITE */
 
-.favorite-btn{
+        .favorite-btn{
 
-    padding:15px 22px;
+            padding:15px 22px;
 
-    border:none;
+            border:none;
 
-    border-radius:16px;
+            border-radius:16px;
 
-    background:#ef4444;
+            background:#ef4444;
 
-    color:white;
+            color:white;
 
-    cursor:pointer;
+            cursor:pointer;
 
-    font-weight:700;
+            font-weight:700;
 
-    transition:0.3s;
-}
+            transition:0.3s;
+        }
 
-.favorite-btn:hover{
+        .favorite-btn:hover{
 
-    background:#dc2626;
+            background:#dc2626;
 
-    transform:translateY(-4px);
-}
+            transform:translateY(-4px);
+        }
 
 
-/* MAP */
+        /* MAP */
 
-#map{
+        #map{
 
-    width:100%;
+            width:100%;
 
-    height:520px;
+            height:520px;
 
-    margin-top:35px;
+            margin-top:35px;
 
-    border-radius:30px;
+            border-radius:30px;
 
-    overflow:hidden;
+            overflow:hidden;
 
-    box-shadow:0 20px 40px rgba(0,0,0,0.35);
+            box-shadow:0 20px 40px rgba(0,0,0,0.35);
 
-    border:1px solid rgba(255,255,255,0.08);
-}
+            border:1px solid rgba(255,255,255,0.08);
+        }
 
 
-/* COMMENTS */
+        /* COMMENTS */
 
-.comments-section{
+        .comments-section{
 
-    margin-top:50px;
-}
+            margin-top:50px;
+        }
 
 
-/* COMMENTS TITLE */
+        /* COMMENTS TITLE */
 
-.comments-title{
+        .comments-title{
 
-    font-size:36px;
+            font-size:36px;
 
-    margin-bottom:24px;
+            margin-bottom:24px;
 
-    font-weight:800;
-}
+            font-weight:800;
+        }
 
 
-/* FORM */
+        /* FORM */
 
-.comment-form{
+        .comment-form{
 
-    display:flex;
+            display:flex;
 
-    gap:14px;
+            gap:14px;
 
-    margin-bottom:30px;
+            margin-bottom:30px;
 
-    flex-wrap:wrap;
-}
+            flex-wrap:wrap;
+        }
 
 
-/* INPUT */
+        /* INPUT */
 
-.comment-input{
+        .comment-input{
 
-    flex:1;
+            flex:1;
 
-    padding:16px;
+            padding:16px;
 
-    border:none;
+            border:none;
 
-    border-radius:18px;
+            border-radius:18px;
 
-    outline:none;
+            outline:none;
 
-    background:rgba(255,255,255,0.08);
+            background:rgba(255,255,255,0.08);
 
-    backdrop-filter:blur(10px);
+            backdrop-filter:blur(10px);
 
-    color:white;
+            color:white;
 
-    font-size:16px;
+            font-size:16px;
 
-    border:1px solid rgba(255,255,255,0.08);
-}
+            border:1px solid rgba(255,255,255,0.08);
+        }
 
-.comment-input::placeholder{
+        .comment-input::placeholder{
 
-    color:#cbd5e1;
-}
+            color:#cbd5e1;
+        }
 
 
-/* BUTTON */
+        /* BUTTON */
 
-.comment-btn{
+        .comment-btn{
 
-    padding:16px 24px;
+            padding:16px 24px;
 
-    border:none;
+            border:none;
 
-    border-radius:18px;
+            border-radius:18px;
 
-    background:linear-gradient(to right,#2563eb,#7c3aed);
+            background:linear-gradient(to right,#2563eb,#7c3aed);
 
-    color:white;
+            color:white;
 
-    cursor:pointer;
+            cursor:pointer;
 
-    font-weight:700;
+            font-weight:700;
 
-    transition:0.3s;
-}
+            transition:0.3s;
+        }
 
-.comment-btn:hover{
+        .comment-btn:hover{
 
-    transform:translateY(-4px);
-}
+            transform:translateY(-4px);
+        }
 
 
-/* COMMENT LIST */
+        /* COMMENT LIST */
 
-.comments-list{
+        .comments-list{
 
-    display:flex;
+            display:flex;
 
-    flex-direction:column;
+            flex-direction:column;
 
-    gap:18px;
-}
+            gap:18px;
+        }
 
 
-/* COMMENT CARD */
+        /* COMMENT CARD */
 
-.comment-card{
+        .comment-card{
 
-    background:rgba(255,255,255,0.08);
+            background:rgba(255,255,255,0.08);
 
-    padding:24px;
+            padding:24px;
 
-    border-radius:20px;
+            border-radius:20px;
 
-    backdrop-filter:blur(10px);
+            backdrop-filter:blur(10px);
 
-    border:1px solid rgba(255,255,255,0.08);
-}
+            border:1px solid rgba(255,255,255,0.08);
+        }
 
 
-/* COMMENT TEXT */
+        /* COMMENT TEXT */
 
-.comment-text{
+        .comment-text{
 
-    font-size:17px;
+            font-size:17px;
 
-    margin-bottom:12px;
+            margin-bottom:12px;
 
-    line-height:1.6;
+            line-height:1.6;
 
-    color:white;
-}
+            color:white;
+        }
 
 
-/* META */
+        /* META */
 
-.comment-meta{
+        .comment-meta{
 
-    color:#94a3b8;
+            color:#94a3b8;
 
-    font-size:14px;
-}
+            font-size:14px;
+        }
 
 
-/* RESPONSIVE */
+        /* RESPONSIVE */
 
-@media(max-width:768px){
+        @media(max-width:768px){
 
-    body{
+            body{
 
-        padding:20px;
-    }
+                padding:20px;
+            }
 
-    .title{
+            .title{
 
-        font-size:38px;
-    }
+                font-size:38px;
+            }
 
-    .image{
+            .image{
 
-        height:320px;
-    }
+                height:320px;
+            }
 
-    #map{
+            #map{
 
-        height:350px;
-    }
+                height:350px;
+            }
 
-    .action-buttons{
+            .action-buttons{
 
-        flex-direction:column;
-    }
+                flex-direction:column;
+            }
 
-    .comment-form{
+            .comment-form{
 
-        flex-direction:column;
-    }
+                flex-direction:column;
+            }
 
-    .map-btn,
-    .favorite-btn,
-    .comment-btn{
+            .map-btn,
+            .favorite-btn,
+            .comment-btn{
 
-        width:100%;
-    }
-}
+                width:100%;
+            }
+        }
     </style>
 </head>
 
@@ -470,6 +470,7 @@ body{
         const commentsList = document.getElementById("commentsList");
         const commentInput = document.getElementById("commentInput");
         const commentBtn = document.getElementById("commentBtn");
+
         /* =========================
         CREATE COMMENT
         ========================= */
@@ -527,135 +528,219 @@ body{
             }
         }
         async function loadPlaceDetail() {
-            try {
-                const place = await getPlaceById(placeId);
-                container.innerHTML = `
-                    <div class="card">
-                        <img src="http://127.0.0.1:8000/${place.image_path}" class="image" alt="${place.title}"/>
-                        <div class="content">
-                            <h1 class="title">
-                                ${place.title}
-                            </h1>
-                            <p class="description">
-                                ${place.description}
-                            </p>
-                            <p class="info">
-                                <strong>Adres:</strong>
-                                ${place.address}
-                            </p>
-                            <p class="info">
-                                <strong>Fiyat:</strong>
-                                ${place.price}
-                            </p>
-                            <p class="info">
-                                <strong>Latitude:</strong>
-                                ${place.latitude}
-                            </p>
-                            <p class="info">
-                                <strong>Longitude:</strong>
-                                ${place.longitude}
-                            </p>
-                            <p class="card-info">
-                                <strong>Mesafe:</strong>
-                                ${
-                                    place.distance
-                                        ? formatDistance(place.distance)
-                                        : "Bilinmiyor"
-                                }
-                            </p>
-                            <p class="info">
-                                <strong>Eklenme Tarihi:</strong>
-                                ${new Date(place.created_at).toLocaleString()}
-                            </p>
-                            <div class="action-buttons">
-                                <a href="${place.link}" target="_blank" class="map-btn">
-                                    Google Maps Aç
-                                </a>
-                                <button class="favorite-btn" id="favoriteBtn">
-                                    ❤️ Favorilere Ekle
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                initializeMap(place);
-                const favoriteBtn = document.getElementById("favoriteBtn");
 
-                favoriteBtn.addEventListener("click", async () => {
+            navigator.geolocation.getCurrentPosition(
+
+                async (position) => {
+
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+
                     try {
-                        await addPlaceToFavorites(placeId);
-                        favoriteBtn.innerHTML = "Favorilere Kaydedildi";
-                        favoriteBtn.disabled = true;
-                    } catch (error) {
-                        console.error(error);
-                        alert("Favorilere eklenemedi");
-                    }
-                });
 
-            } catch (error) {
-                console.error(error);
-                container.innerHTML = `
-                    <h2>Mekan yüklenemedi</h2>
-                `;
-            }
+                        const place = await getPlaceById(
+                            placeId,
+                            userLat,
+                            userLng
+                        );
+
+                        container.innerHTML = `
+                            <div class="card">
+
+                                <img
+                                    src="http://127.0.0.1:8000/${place.image_path}"
+                                    class="image"
+                                    alt="${place.title}"
+                                />
+
+                                <div class="content">
+
+                                    <h1 class="title">
+                                        ${place.title}
+                                    </h1>
+
+                                    <p class="description">
+                                        ${place.description}
+                                    </p>
+
+                                    <p class="info">
+                                        <strong>Adres:</strong>
+                                        ${place.address}
+                                    </p>
+
+                                    <p class="info">
+                                        <strong>Fiyat:</strong>
+                                        ${place.price}
+                                    </p>
+
+                                    <p class="info">
+                                        <strong>Latitude:</strong>
+                                        ${place.latitude}
+                                    </p>
+
+                                    <p class="info">
+                                        <strong>Longitude:</strong>
+                                        ${place.longitude}
+                                    </p>
+
+                                    <p class="info">
+                                        <strong>Mesafe:</strong>
+                                        ${
+                                            place.distance !== undefined
+                                                ? formatDistance(place.distance)
+                                                : "Bilinmiyor"
+                                        }
+                                    </p>
+
+                                    <p class="info">
+                                        <strong>Eklenme Tarihi:</strong>
+                                        ${new Date(
+                                            place.created_at
+                                        ).toLocaleString()}
+                                    </p>
+
+                                    <div class="action-buttons">
+
+                                        <a
+                                            href="${place.link}"
+                                            target="_blank"
+                                            class="map-btn"
+                                        >
+                                            Google Maps Aç
+                                        </a>
+
+                                        <button
+                                            class="favorite-btn"
+                                            id="favoriteBtn"
+                                        >
+                                            ❤️ Favorilere Ekle
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        `;
+
+                        initializeMap(
+                            place,
+                            userLat,
+                            userLng
+                        );
+
+                        const favoriteBtn =
+                            document.getElementById("favoriteBtn");
+
+                        favoriteBtn.addEventListener(
+                            "click",
+                            async () => {
+
+                                try {
+
+                                    await addPlaceToFavorites(placeId);
+
+                                    favoriteBtn.innerHTML =
+                                        "Favorilere Kaydedildi";
+
+                                    favoriteBtn.disabled = true;
+
+                                } catch (error) {
+
+                                    console.error(error);
+
+                                    alert("Favorilere eklenemedi");
+                                }
+                            }
+                        );
+
+                    } catch (error) {
+
+                        console.error(error);
+
+                        container.innerHTML = `
+                            <h2>Mekan yüklenemedi</h2>
+                        `;
+                    }
+                },
+
+                (error) => {
+
+                    console.error(error);
+
+                    container.innerHTML = `
+                        <h2>Konum alınamadı</h2>
+                    `;
+                }
+            );
         }
         /* =========================
            MAP
         ========================= */
 
-        function initializeMap(place) {
+        function initializeMap(
+            place,
+            userLat,
+            userLng
+        ) {
+
             const destinationLat = place.latitude;
             const destinationLng = place.longitude;
+
             const map = L.map("map").setView(
                 [destinationLat, destinationLng],
                 14
             );
+
             L.tileLayer(
                 "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
                     attribution: "&copy; OpenStreetMap contributors"
                 }
             ).addTo(map);
-            /* PLACE MARKER */
-            L.marker([destinationLat, destinationLng]).addTo(map).bindPopup(place.title).openPopup();
 
-            /* USER LOCATION */
+            /* PLACE */
 
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const userLat = position.coords.latitude;
-                    const userLng = position.coords.longitude;
-                    /* USER MARKER */
-                    L.marker([userLat, userLng]).addTo(map).bindPopup("Sizin Konumunuz");
-                    /* ROUTE */
-                    L.Routing.control({
-                        waypoints: [
-                            L.latLng(userLat, userLng),
-                            L.latLng(destinationLat, destinationLng)
-                        ],
-                        routeWhileDragging: false,
-                        show: false,
-                        addWaypoints: false,
-                        draggableWaypoints: false,
-                        fitSelectedRoutes: true
-                    }).addTo(map);
-                },
-                (error) => {
-                    console.error("Konum alınamadı:", error);
-                }
-            );
+            L.marker([destinationLat, destinationLng])
+                .addTo(map)
+                .bindPopup(place.title)
+                .openPopup();
+
+            /* USER */
+
+            L.marker([userLat, userLng])
+                .addTo(map)
+                .bindPopup("Sizin Konumunuz");
+
+            /* ROUTE */
+
+            L.Routing.control({
+
+                waypoints: [
+                    L.latLng(userLat, userLng),
+                    L.latLng(destinationLat, destinationLng)
+                ],
+
+                routeWhileDragging: false,
+
+                show: false,
+
+                addWaypoints: false,
+
+                draggableWaypoints: false,
+
+                fitSelectedRoutes: true
+
+            }).addTo(map);
         }
-        function formatDistance(distance) {
 
+        function formatDistance(distance) {
             if (!distance && distance !== 0) {
                 return "Bilinmiyor";
             }
-
             if (distance < 1) {
-
                 return `${Math.round(distance * 1000)} m`;
             }
-
             return `${distance.toFixed(1)} km`;
         }
         loadPlaceDetail();
