@@ -189,3 +189,17 @@ export async function getNearbyPlacesByCategory(
         }
     );
 }
+
+/* Place Rating */
+
+export async function ratePlace(placeId, rating) {
+    return request(`/place/${placeId}/rate`, {
+        method: "POST",
+        headers: getHeaders(),
+        body: JSON.stringify({ rating })
+    });
+}
+
+export async function getPlaceRating(placeId) {
+    return request(`/place/${placeId}/rating`, {headers: getHeaders(null)});
+}

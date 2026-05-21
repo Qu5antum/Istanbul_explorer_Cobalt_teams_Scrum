@@ -11,6 +11,7 @@ from src.api.endpoints.category_endpoint import category_route
 from src.api.endpoints.place_endpoint import places_route
 from src.api.endpoints.comment_endpoint import comment_router
 from src.api.endpoints.favorite_place_endpoint import favorite_place_router
+from src.api.endpoints.rating_endpoint import rating_route
 
 
 app = FastAPI(
@@ -43,6 +44,7 @@ app.include_router(category_route)
 app.include_router(places_route)
 app.include_router(comment_router)
 app.include_router(favorite_place_router)
+app.include_router(rating_route)
 
 if __name__ == "__main__":
     uvicorn.run(

@@ -51,6 +51,11 @@ class User(Base):
     password: Mapped[str] = mapped_column(nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True)
     role: Mapped[UserRole] = mapped_column(default=UserRole.USER, nullable=False)
+
+    ratings: Mapped["PlaceRating"] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
     
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), 
@@ -95,6 +100,11 @@ class Place(Base):
     )
 
     comments: Mapped[list["Comment"]] = relationship(
+        back_populates="place",
+        cascade="all, delete-orphan"
+    )
+
+    ratings: Mapped["PlaceRating"] = relationship(
         back_populates="place",
         cascade="all, delete-orphan"
     )
@@ -166,5 +176,47 @@ class FavoritePlace(Base):
         default=lambda: datetime.datetime.now(datetime.UTC), 
         index=True
     )
+
+
+class PlaceRating(Base):
+    __tablename__ = "place_ratings"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id",
+            "place_id",
+            name="unique_user_place_rating"
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+
+    rating: Mapped[int] = mapped_column(nullable=False)
+
+    user_id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    place: Mapped["Place"] = relationship(
+        back_populates="ratings"
+    )
+
+    user: Mapped["User"] = relationship(
+        back_populates="ratings"
+    )
+
+    place_id: Mapped[int] = mapped_column(
+        ForeignKey("places.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), 
+        default=lambda: datetime.datetime.now(datetime.UTC), 
+        index=True
+    )
+    
 
 
