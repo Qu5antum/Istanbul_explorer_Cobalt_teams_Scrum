@@ -9,6 +9,7 @@ from src.repositories.category_repository import CategoryRepository
 from src.exception_handlers.db_exception import DatabaseException
 from src.exception_handlers.place_exception import PlaceNotFoundException, PlaceAlreadyExists
 from src.api.schemas.user_schema import UserLocationRequest
+from src.exception_handlers.category_exception import SomeCategoryNotFound
 
 
 class PlaceService:
@@ -33,7 +34,7 @@ class PlaceService:
         )
 
         if len(categories) != len(place.category_ids):
-            raise ValueError(
+            raise SomeCategoryNotFound(
                 "Bazı kategoriler bulunamadı"
             )
 

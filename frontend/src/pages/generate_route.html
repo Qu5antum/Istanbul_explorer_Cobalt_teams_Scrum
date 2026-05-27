@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Route Generate</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Inter,Arial,sans-serif;
+        }
+        body{
+            background:#0f172a;
+            color:white;
+            padding:40px;
+            background-image:
+            radial-gradient(circle at top left,#2563eb33,transparent 25%),
+            radial-gradient(circle at bottom right,#7c3aed33,transparent 25%);
+        }
+        .container{
+            max-width:900px;
+            margin:auto;
+        }
+        .title{
+            font-size:52px;
+            font-weight:800;
+            margin-bottom:30px;
+            background:linear-gradient(to right,#60a5fa,#c084fc);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+        .form{
+            display:flex;
+            flex-direction:column;
+            gap:24px;
+        }
+        .input-group{
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+        }
+        .label{
+            font-weight:700;
+            color:#cbd5e1;
+        }
+        .input{
+            padding:16px;
+            border:none;
+            border-radius:18px;
+            background:rgba(255,255,255,0.08);
+            backdrop-filter:blur(10px);
+            color:white;
+            border:1px solid rgba(255,255,255,0.08);
+            outline:none;
+        }
+        .categories{
+            display:flex;
+            flex-wrap:wrap;
+            gap:14px;
+        }
+        .category{
+            padding:12px 18px;
+            border-radius:999px;
+            background:rgba(255,255,255,0.08);
+            cursor:pointer;
+            border:1px solid rgba(255,255,255,0.08);
+            transition:0.3s;
+        }
+        .category.active{
+            background:linear-gradient(to right,#2563eb,#7c3aed);
+        }
+        .submit-btn{
+            padding:18px;
+            border:none;
+            border-radius:18px;
+            background:linear-gradient(to right,#2563eb,#7c3aed);
+            color:white;
+            font-size:18px;
+            font-weight:700;
+            cursor:pointer;
+            transition:0.3s;
+        }
+        .submit-btn:hover{
+            transform:translateY(-4px);
+        }
+        .result{
+            margin-top:40px;
+        }
+        .route-card{
+            background:rgba(255,255,255,0.08);
+            padding:24px;
+            border-radius:24px;
+            margin-bottom:20px;
+            border:1px solid rgba(255,255,255,0.08);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="title">
+        Rota Oluştur
+    </h1>
+    <div class="form">
+        <div class="input-group">
+            <label class="label">
+                Rota Başlığı
+            </label>
+            <input type="text" id="routeTitle" class="input" placeholder="My Istanbul Route"/>
+        </div>
+        <div class="input-group">
+            <label class="label">     
+                Başlangıç ​​Zamanı
+            </label>
+            <input type="datetime-local" id="startTime" class="input"/>
+        </div>
+        <div class="input-group">
+            <label class="label">
+                Bütçe (₺)
+            </label>
+
+            <input
+                type="number"
+                id="budget"
+                class="input"
+                placeholder="5000"
+            />
+
+        </div>
+
+        <div class="input-group">
+
+            <label class="label">
+                Kategoriler
+            </label>
+
+            <div
+                id="categories"
+                class="categories"
+            ></div>
+        </div>
+        <button id="generateBtn" class="submit-btn">
+            Rota Oluştur
+        </button>
+    </div>
+    <div id="result" class="result"></div>
+</div>
+
+<script type="module">
+
+    import {
+        getCategories,
+        generateRoute
+    } from "../scripts/api.js";
+    const categoriesContainer = document.getElementById("categories");
+    const generateBtn = document.getElementById("generateBtn");
+    const result = document.getElementById("result");
+    let selectedCategories = [];
+
+    async function loadCategories() {
+        try {
+            const categories = await getCategories();
+            categories.forEach(category => {
+                const div = document.createElement("div");
+                div.className = "category";
+                div.textContent = category.title;
+                div.addEventListener(
+                    "click",
+                    () => {
+                        div.classList.toggle("active");
+                        if (
+                            selectedCategories.includes(
+                                category.id
+                            )
+                        ) {
+                            selectedCategories =
+                                selectedCategories.filter(
+                                    id => id !== category.id
+                                );
+                        } else {
+                            selectedCategories.push(
+                                category.id
+                            );
+                        }
+                    }
+                );
+                categoriesContainer.appendChild(div);
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    generateBtn.addEventListener(
+        "click",
+        async () => {
+            const routeTitle =
+                document.getElementById(
+                    "routeTitle"
+                ).value;
+            const startTime =
+                document.getElementById(
+                    "startTime"
+                ).value;
+            const budget =
+                document.getElementById(
+                    "budget"
+                ).value;
+            if (!routeTitle || !startTime) {
+                alert("Tüm alanları doldurun");
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    try {
+                        const data = {
+                            route_title: routeTitle,
+                            start_time: new Date(startTime).toISOString(),
+                            budget:
+                                budget
+                                    ? Number(budget)
+                                    : null,
+                            userLocation: {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude
+                            },
+                            category_ids: selectedCategories
+                        };
+                        const generatedRoute = await generateRoute(data);
+                        renderResult(generatedRoute);
+                    } catch (error) {
+                        console.error(error);
+                        alert(
+                            "Route oluşturulamadı"
+                        );
+                    }
+                }
+            );
+        }
+    );
+
+    function renderResult(route) {
+        result.innerHTML = `
+            <div class="route-card">
+                <h2>
+                    ${route.title}
+                </h2>
+                <br>
+                <p>
+                    Route ID: ${route.route_id}
+                </p>
+                <br>
+                ${
+                    route.places.map(place => `
+                        <div style="margin-bottom:16px">
+                            <strong>
+                                ${place.order}.
+                                ${place.title}
+                            </strong>
+                            <br>
+                            ${formatDate(place.arrival_time)}
+                        </div>
+                    `).join("")
+                }
+            </div>
+        `;
+    }
+
+    function formatDate(dateString) {
+        return new Date(
+            dateString
+        ).toLocaleString("tr-TR");
+    }
+    loadCategories();
+
+</script>
+
+</body>
+</html>

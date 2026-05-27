@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Rotalarım</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Inter,Arial,sans-serif;
+        }
+        body{
+            background:#0f172a;
+            color:white;
+            padding:40px;
+            background-image:
+            radial-gradient(circle at top left,#2563eb33,transparent 25%),
+            radial-gradient(circle at bottom right,#7c3aed33,transparent 25%);
+        }
+        .container{
+            max-width:1300px;
+            margin:auto;
+        }
+        .topbar{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:40px;
+            gap:20px;
+            flex-wrap:wrap;
+        }
+        .title{
+            font-size:48px;
+            font-weight:800;
+            background:linear-gradient(
+                to right,
+                #60a5fa,
+                #c084fc
+            );
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+        .back-btn{
+            text-decoration:none;
+            color:white;
+            padding:14px 22px;
+            border-radius:16px;
+            background:rgba(255,255,255,0.08);
+            border:1px solid rgba(255,255,255,0.08);
+            transition:.3s;
+        }
+        .back-btn:hover{
+            background:#2563eb;
+            transform:translateY(-4px);
+        }
+        .routes-grid{
+            display:grid;
+            grid-template-columns:
+            repeat(auto-fill,minmax(350px,1fr));
+            gap:30px;
+        }
+        .route-card{
+            background:rgba(255,255,255,0.08);
+            border-radius:28px;
+            padding:28px;
+            border:1px solid rgba(255,255,255,0.08);
+            backdrop-filter:blur(12px);
+            transition:.3s;
+            cursor:pointer;
+        }
+        .route-card:hover{
+            transform:translateY(-8px);
+            box-shadow:
+            0 20px 40px rgba(0,0,0,0.35);
+        }
+        .route-title{
+            font-size:30px;
+            font-weight:800;
+            margin-bottom:20px;
+        }
+        .route-info{
+            margin-bottom:12px;
+            color:#cbd5e1;
+            line-height:1.7;
+        }
+        .route-footer{
+            margin-top:24px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+
+            gap:12px;
+
+            flex-wrap:wrap;
+        }
+        .share-btn{
+            border:none;
+            padding:12px 18px;
+            border-radius:14px;
+            cursor:pointer;
+            color:white;
+            font-weight:700;
+            background:linear-gradient(
+                to right,
+                #2563eb,
+                #7c3aed
+            );
+            transition:.3s;
+        }
+        .share-btn:hover{
+            transform:translateY(-3px);
+        }
+        .empty{
+            text-align:center;
+            margin-top:100px;
+            color:#cbd5e1;
+            font-size:26px;
+        }
+        @media(max-width:768px){
+            body{
+                padding:20px;
+            }
+            .title{
+                font-size:38px;
+            }
+        }
+        .route-btn{
+            text-decoration:none;
+            color:white;
+            padding:14px 22px;
+            border-radius:16px;
+            background:rgba(255,255,255,0.08);
+            border:1px solid rgba(255,255,255,0.08);
+            transition:.3s;
+        }
+        .actions{
+            display:flex;
+            align-items:center;
+            gap:14px;
+            flex-wrap:wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="topbar">
+            <h1 class="title">
+                Rotalarım
+            </h1>
+            <div class="actions">
+                <a href="./main_page.html" class="back-btn">
+                    Ana Sayfa
+                </a>
+                <a href="./generate_route.html" class="route-btn">
+                    Rota Oluştur
+                </a>
+            </div>
+        </div>
+        <div id="routesGrid" class="routes-grid"></div>
+    </div>
+    <script type="module">
+        import {
+            getRoutes
+        } from "../scripts/api.js";
+        const routesGrid =
+            document.getElementById(
+                "routesGrid"
+            );
+        /* =========================
+           LOAD ROUTES
+        ========================= */
+
+        async function loadRoutes() {
+            try {
+                const routes = await getRoutes();
+                routesGrid.innerHTML = "";
+                if (!routes.length) {
+                    routesGrid.innerHTML = `
+                        <div class="empty">
+                            Henüz rota oluşturulmadı
+                        </div>
+                    `;
+                    return;
+                }
+
+                routes.forEach(route => {
+                    const card = document.createElement("div");
+                    card.className = "route-card";
+                    card.innerHTML = `
+                        <h2 class="route-title">
+                            ${route.title}
+                        </h2>
+
+                        <p class="route-info">
+                            <strong>Mesafe:</strong>
+                            ${formatDistance(
+                                route.total_distance
+                            )}
+                        </p>
+
+                        <p class="route-info">
+                            <strong>Süre:</strong>
+                            ${formatDuration(
+                                route.estimated_duration
+                            )}
+                        </p>
+
+                        <p class="route-info">
+                            <strong>Oluşturulma:</strong>
+                            ${new Date(
+                                route.created_at
+                            ).toLocaleString()}
+                        </p>
+
+                        <p class="route-info">
+                            <strong>Public:</strong>
+                            ${
+                                route.is_public
+                                    ? "Evet"
+                                    : "Hayır"
+                            }
+                        </p>
+                        <div class="route-footer">
+                            <button class="share-btn"data-token="${route.share_token}">
+                                Paylaş
+                            </button>
+                        </div>
+                    `;
+
+                    card.addEventListener(
+                        "click",
+                        () => {
+                            window.location.href = `route_detail.html?id=${route.id}`;
+                        }
+                    );
+                    const shareBtn = card.querySelector(".share-btn");
+                    shareBtn.addEventListener(
+                        "click",
+                        async (e) => {
+                            e.stopPropagation();
+                            const shareUrl = `${window.location.origin}/frontend/src/pages/shared_route.html?token=${route.share_token}`;
+                            try {
+                                await navigator.clipboard.writeText(
+                                    shareUrl
+                                );
+                                alert(
+                                    "Paylaşım linki kopyalandı"
+                                );
+                            } catch (error) {
+                                console.error(error);
+                                alert(
+                                    "Link kopyalanamadı"
+                                );
+                            }
+                        }
+                    );
+                    routesGrid.appendChild(card);
+                });
+            } catch (error) {
+                console.error(error);
+                routesGrid.innerHTML = `
+                    <div class="empty">
+                        Rotalar yüklenemedi
+                    </div>
+                `;
+            }
+        }
+
+        /* =========================
+           FORMAT DISTANCE
+        ========================= */
+
+        function formatDistance(distance) {
+            if (!distance && distance !== 0) {
+                return "Bilinmiyor";
+            }
+            return `
+                ${distance.toFixed(2)} km
+            `;
+        }
+
+        /* =========================
+           FORMAT DURATION
+        ========================= */
+
+        function formatDuration(minutes) {
+
+            if (!minutes && minutes !== 0) {
+                return "Bilinmiyor";
+            }
+
+            const hours =
+                Math.floor(minutes / 60);
+
+            const mins =
+                minutes % 60;
+
+            if (hours <= 0) {
+                return `${mins} dk`;
+            }
+
+            return `
+                ${hours} saat ${mins} dk
+            `;
+        }
+
+        loadRoutes();
+
+    </script>
+
+</body>
+</html>

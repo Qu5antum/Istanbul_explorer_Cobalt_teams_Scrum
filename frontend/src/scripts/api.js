@@ -203,3 +203,60 @@ export async function ratePlace(placeId, rating) {
 export async function getPlaceRating(placeId) {
     return request(`/place/${placeId}/rating`, {headers: getHeaders(null)});
 }
+
+
+/* =========================
+   GET ALL ROUTES
+========================= */
+export async function getRoutes() {
+    return request(
+        "/route/all",
+        {
+            method: "GET",
+            headers: getHeaders()
+        }
+    );
+}
+
+/* =========================
+   GET ROUTE PLACES
+========================= */
+
+export async function getRoutePlaces(
+    routeId
+) {
+    return request(
+        `/route/${routeId}/route_places`,
+        {
+            method: "GET",
+            headers: getHeaders()
+        }
+    );
+}
+
+/* =========================
+   GENERATE ROUTE
+========================= */
+
+export async function generateRoute(data) {
+
+    return request("/route/generate", {
+        method: "POST",
+        headers: getHeaders(),
+        body: JSON.stringify(data)
+    });
+}
+
+/* delete route */
+export async function deleteRoute(routeId) {
+    return request(`/route/${routeId}/delete`, {
+        method: "DELETE",
+        headers: getHeaders()
+    });
+}
+
+export async function getSharedRoute(routeToken) {
+    return request(`/route/${routeToken}/shared`, {
+        headers: getHeaders()
+    });
+}

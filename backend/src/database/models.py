@@ -52,7 +52,12 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(default=True)
     role: Mapped[UserRole] = mapped_column(default=UserRole.USER, nullable=False)
 
-    ratings: Mapped["PlaceRating"] = relationship(
+    ratings: Mapped[list["PlaceRating"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
+    routes: Mapped[list["Route"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan"
     )
@@ -104,7 +109,12 @@ class Place(Base):
         cascade="all, delete-orphan"
     )
 
-    ratings: Mapped["PlaceRating"] = relationship(
+    ratings: Mapped[list["PlaceRating"]] = relationship(
+        back_populates="place",
+        cascade="all, delete-orphan"
+    )
+
+    route_places: Mapped[list["RoutePlace"]] = relationship(
         back_populates="place",
         cascade="all, delete-orphan"
     )
@@ -219,4 +229,75 @@ class PlaceRating(Base):
     )
     
 
+class Route(Base):
+    __tablename__ = "routes"
 
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+
+    user_id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    user: Mapped["User"] = relationship(
+        back_populates="routes"
+    )
+
+    title: Mapped[str] = mapped_column(nullable=False)
+    total_distance: Mapped[float] = mapped_column(nullable=False)
+    estimated_duration: Mapped[int] = mapped_column(nullable=False)
+    share_token: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        default=uuid.uuid4,
+        unique=True,
+    )
+    is_public: Mapped[bool] = mapped_column(default=True)
+
+    route_places: Mapped[list["RoutePlace"]] = relationship(
+        back_populates="route",
+        cascade="all, delete-orphan"
+    )
+
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), 
+        default=lambda: datetime.datetime.now(datetime.UTC), 
+        index=True
+    )
+
+
+class RoutePlace(Base):
+    __tablename__ = "route_places"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+
+    route_id: Mapped[int] = mapped_column(
+        ForeignKey("routes.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    route: Mapped["Route"] = relationship(
+        back_populates="route_places"
+    )
+
+    place_id: Mapped[int] = mapped_column(
+        ForeignKey("places.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    place: Mapped["Place"] = relationship(
+        back_populates="route_places"
+    )
+
+    order_number: Mapped[int] = mapped_column(nullable=False)
+    title: Mapped[str] = mapped_column(nullable=False)
+    arrival_time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    departure_time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    travel_duration: Mapped[int] = mapped_column(nullable=False)
+    visit_duration: Mapped[int] = mapped_column(nullable=False)
+
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), 
+        default=lambda: datetime.datetime.now(datetime.UTC), 
+        index=True
+    )

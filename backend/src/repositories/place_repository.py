@@ -187,3 +187,57 @@ class PlaceRepository(BaseRepository):
             "created_at": place.created_at,
             "distance": round(distance_value, 2)
         }
+    
+
+    async def get_places_with_category_ids(self, lat: float, lng: float, category_ids: list[int]):
+        distance = (
+            6371 *
+            func.acos(
+                func.cos(func.radians(lat))
+                *
+                func.cos(func.radians(self.model.latitude))
+                *
+                func.cos(
+                    func.radians(self.model.longitude)
+                    -
+                    func.radians(lng)
+                )
+                +
+                func.sin(func.radians(lat))
+                *
+                func.sin(func.radians(self.model.latitude))
+            )
+        ).label("distance")
+
+        query = (
+            select(self.model, distance)
+            .options(selectinload(self.model.categories))
+            .where(
+                Category.id.in_(
+                    category_ids
+                )
+            )
+            .distinct()
+            .order_by(distance)
+            .limit(5)
+        )
+
+        result = await self.session.execute(query)
+    
+        rows = result.all()
+
+        return [
+            {
+                "place": place,
+                "distance": distance_value
+            }
+            for place, distance_value in rows
+        ]
+    
+    async def get_places_with_ids(self, place_ids: int):
+        result = await self.session.execute(
+            select(self.model)
+            .where(self.model.id.in_(place_ids))
+        )
+
+        return result.scalars().all()
