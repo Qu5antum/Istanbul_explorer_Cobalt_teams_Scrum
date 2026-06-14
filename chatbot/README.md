@@ -34,33 +34,35 @@ istanbul_chatbot/
 ## 🗂️ Veri Seti
 
 ### İstanbul Belgeleri (20 Kategori)
-| Kategori | İçerik |
-|----------|--------|
-| `tarih_ve_kuruluş` | Byzantion, Konstantinopolis, Osmanlı dönemi |
-| `cografya_ve_konumu` | Boğaz, Haliç, ilçeler, adalar |
-| `nufus_ve_demographics` | Nüfus verileri, ilçe büyüklükleri |
-| `ekonomi_ve_is_hayati` | BIST, ticaret, finans merkezi |
-| `tarihi_yarimada_ve_surlar` | Theodosius Surları, UNESCO alanları |
-| `ayasofya` | Tarihi, mimarisi, önemi |
-| `topkapi_sarayi` | Osmanlı sarayı, koleksiyonlar |
-| `mavi_cami_sultanahmet` | Sultanahmet Camii detayları |
-| `kapalicarsi` | Grand Bazaar, tarih ve alışveriş |
-| `bogaz_ve_uskudar_besiktas` | Boğaz semtleri |
-| `ulasim` | Metro, vapur, Marmaray, havalimanı |
-| `egitim_ve_universiteler` | İTÜ, Boğaziçi, Marmara vb. |
-| `kultur_sanat_muzeler` | Müzeler, festivaller, sanat |
-| `gastronomi_ve_yemek_kulturu` | Yemekler, çarşılar, lezzetler |
-| `beyoglu_ve_istiklal` | Beyoğlu, Galata, Taksim |
-| `kadikoy_ve_asya_yakasi` | Kadıköy, Üsküdar, Bağdat Caddesi |
-| `dogal_alanlar_ve_parklar` | Ormanlar, parklar, sahiller |
-| `iklim` | Mevsimler, rüzgarlar, sıcaklık |
-| `spor` | Futbol, F1, maraton |
-| `teknoloji_ve_girisimcilik` | Startup ekosistemi, unicornlar |
-| `dini_mekanlar_ve_kiliseler` | Camiler, kiliseler, sinagoglar |
-| `ada_ve_marmara` | Prens Adaları |
-| `genel_bilgiler` | Özet bilgiler |
+
+| Kategori                      | İçerik                                      |
+| ----------------------------- | ------------------------------------------- |
+| `tarih_ve_kuruluş`            | Byzantion, Konstantinopolis, Osmanlı dönemi |
+| `cografya_ve_konumu`          | Boğaz, Haliç, ilçeler, adalar               |
+| `nufus_ve_demographics`       | Nüfus verileri, ilçe büyüklükleri           |
+| `ekonomi_ve_is_hayati`        | BIST, ticaret, finans merkezi               |
+| `tarihi_yarimada_ve_surlar`   | Theodosius Surları, UNESCO alanları         |
+| `ayasofya`                    | Tarihi, mimarisi, önemi                     |
+| `topkapi_sarayi`              | Osmanlı sarayı, koleksiyonlar               |
+| `mavi_cami_sultanahmet`       | Sultanahmet Camii detayları                 |
+| `kapalicarsi`                 | Grand Bazaar, tarih ve alışveriş            |
+| `bogaz_ve_uskudar_besiktas`   | Boğaz semtleri                              |
+| `ulasim`                      | Metro, vapur, Marmaray, havalimanı          |
+| `egitim_ve_universiteler`     | İTÜ, Boğaziçi, Marmara vb.                  |
+| `kultur_sanat_muzeler`        | Müzeler, festivaller, sanat                 |
+| `gastronomi_ve_yemek_kulturu` | Yemekler, çarşılar, lezzetler               |
+| `beyoglu_ve_istiklal`         | Beyoğlu, Galata, Taksim                     |
+| `kadikoy_ve_asya_yakasi`      | Kadıköy, Üsküdar, Bağdat Caddesi            |
+| `dogal_alanlar_ve_parklar`    | Ormanlar, parklar, sahiller                 |
+| `iklim`                       | Mevsimler, rüzgarlar, sıcaklık              |
+| `spor`                        | Futbol, F1, maraton                         |
+| `teknoloji_ve_girisimcilik`   | Startup ekosistemi, unicornlar              |
+| `dini_mekanlar_ve_kiliseler`  | Camiler, kiliseler, sinagoglar              |
+| `ada_ve_marmara`              | Prens Adaları                               |
+| `genel_bilgiler`              | Özet bilgiler                               |
 
 ### Intent Sınıfları (6 Sınıf, 130+ Örnek)
+
 ```
 tarih_ve_kultur       → 25 örnek
 ulasim_ve_seyahat     → 23 örnek
@@ -75,6 +77,7 @@ spor_ve_eglence       → 22 örnek
 ## 🚀 Kurulum ve Çalıştırma
 
 ### 1. Ortam Kurulumu
+
 ```bash
 pip install datasets transformers torch sentence-transformers \
             faiss-cpu scikit-learn pandas numpy matplotlib seaborn \
@@ -93,9 +96,15 @@ jupyter notebook 04_RAG_BERT_Entegrasyon.ipynb  # Chatbot başlat
 ```
 
 ### 3. Standalone Uygulama
+
 ```bash
+# Option 1: run directly with Python
 python chatbot_app.py
-# → http://localhost:7860
+# → http://127.0.0.1:8000
+
+# Option 2: run with uvicorn (recommended for development)
+uvicorn chatbot_app:app --host 127.0.0.1 --port 8000 --reload
+# → http://127.0.0.1:8000/docs
 ```
 
 ---
@@ -130,10 +139,11 @@ Kullanıcı Sorusu
 ---
 
 ## 📊 Kullanılan Modeller
+
 - **BERT**: `dbmdz/bert-base-turkish-cased` (Turkish BERT)
 - **Embedding**: `paraphrase-multilingual-MiniLM-L12-v2`
 - **Vector DB**: FAISS (IndexFlatL2)
 
 ---
 
-*🕌 İstanbul — Üç imparatorluğun başkenti, bir dünyanın kalbi.*
+_🕌 İstanbul — Üç imparatorluğun başkenti, bir dünyanın kalbi._

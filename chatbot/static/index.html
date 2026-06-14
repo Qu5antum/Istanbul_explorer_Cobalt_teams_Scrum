@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>İstanbul Şehir Rehberi — Assisstant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+      :root {
+        --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        --card-bg: rgba(15, 23, 42, 0.6);
+        --card-border: rgba(255, 255, 255, 0.08);
+        --accent: #06b6d4;
+        --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #7c3aed 100%);
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --bg-bot: #1e293b;
+        --radius-lg: 16px;
+        --radius-md: 12px;
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background: var(--bg-gradient);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .chat-app {
+        width: 100%;
+        max-width: 850px;
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        backdrop-filter: blur(16px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        margin-bottom: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 16px;
+      }
+
+      header h1 {
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+        background: linear-gradient(90deg, #fff, var(--text-muted));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .sub {
+        margin-top: 4px;
+        color: var(--text-muted);
+        font-size: 14px;
+      }
+
+      .messages {
+        height: 55vh;
+        min-height: 380px;
+        overflow-y: auto;
+        padding-right: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .messages::-webkit-scrollbar {
+        width: 6px;
+      }
+      .messages::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .messages::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+      }
+      .messages::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .msg-container {
+        display: flex;
+        flex-direction: column;
+        max-width: 75%;
+        gap: 4px;
+      }
+
+      .msg-container.me {
+        align-self: flex-end;
+        align-items: flex-end;
+      }
+
+      .msg-container.bot {
+        align-self: flex-start;
+        align-items: flex-start;
+      }
+
+      .bubble {
+        padding: 12px 16px;
+        border-radius: var(--radius-md);
+        font-size: 14.5px;
+        line-height: 1.5;
+        word-break: break-word;
+        white-space: pre-wrap;
+      }
+
+      .msg-container.me .bubble {
+        background: var(--accent-gradient);
+        color: #ffffff;
+        border-bottom-right-radius: 4px;
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2);
+      }
+
+      .msg-container.bot .bubble {
+        background: var(--bg-bot);
+        color: #e2e8f0; /* Более яркий текст для ответов бота */
+        border-bottom-left-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.03);
+      }
+
+      .meta {
+        font-size: 11px;
+        color: var(--text-muted);
+        padding: 0 4px;
+      }
+
+      .chat-form {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .input-wrapper {
+        flex: 1;
+        position: relative;
+      }
+
+      .chat-form input {
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(15, 23, 42, 0.6);
+        color: var(--text-main);
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+
+      .chat-form input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+      }
+
+      .chat-form button {
+        padding: 0 24px;
+        border-radius: var(--radius-md);
+        border: 0;
+        background: var(--accent);
+        color: #0f172a;
+        font-weight: 500;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .chat-form button:hover:not(:disabled) {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      .chat-form button:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      .chat-form button:disabled {
+        background: #334155;
+        color: var(--text-muted);
+        cursor: not-allowed;
+      }
+
+      /* Анимация точек при ожидании ответа */
+      .typing-dots {
+        display: flex;
+        gap: 4px;
+        padding: 4px 0;
+      }
+      .typing-dots span {
+        width: 6px;
+        height: 6px;
+        background: var(--text-muted);
+        border-radius: 50%;
+        animation: blink 1.4s infinite both;
+      }
+      .typing-dots span:nth-child(2) { animation-delay: .2s; }
+      .typing-dots span:nth-child(3) { animation-delay: .4s; }
+
+      @keyframes blink {
+        0% { opacity: .2; }
+        20% { opacity: 1; }
+        100% { opacity: .2; }
+      }
+
+      .credits {
+        margin-top: 14px;
+        font-size: 12px;
+        color: var(--text-muted);
+        text-align: center;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="chat-app">
+      <header>
+        <h1>İstanbul Şehir Rehberi</h1>
+        <p class="sub">Soru sor, ilgili bilgi parçalarını al ve kaynaklarını gör.</p>
+      </header>
+
+      <section id="messages" class="messages" aria-live="polite"></section>
+
+      <form id="chat-form" class="chat-form">
+        <div class="input-wrapper">
+          <input
+            id="message-input"
+            type="text"
+            placeholder="Bir soru yazın..."
+            autocomplete="off"
+            required
+          />
+        </div>
+        <button id="send-btn" type="submit">Gönder</button>
+      </form>
+
+      <footer class="credits">
+        API: <a href="/">/</a> · UI: <a href="/app">/app</a>
+      </footer>
+    </main>
+
+    <script>
+      const form = document.getElementById('chat-form');
+      const input = document.getElementById('message-input');
+      const messages = document.getElementById('messages');
+      const sendBtn = document.getElementById('send-btn');
+
+      // Безопасная функция экранирования HTML во избежание XSS инъекций
+      function escapeHTML(str) {
+        return str.replace(/[&<>'"]/g, 
+          tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+        );
+      }
+
+      function appendMessage(text, who = 'bot', meta = '', isTyping = false) {
+        const container = document.createElement('div');
+        container.className = `msg-container ${who}`;
+        if(isTyping) container.id = 'typing-indicator';
+
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        
+        if (isTyping) {
+          bubble.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
+        } else {
+          bubble.textContent = text; 
+        }
+
+        container.appendChild(bubble);
+
+        if (meta && !isTyping) {
+          const metaDiv = document.createElement('div');
+          metaDiv.className = 'meta';
+          metaDiv.textContent = meta;
+          container.appendChild(metaDiv);
+        }
+
+        messages.appendChild(container);
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      function removeTypingIndicator() {
+        const indicator = document.getElementById('typing-indicator');
+        if (indicator) indicator.remove();
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+
+        // Добавляем сообщение пользователя
+        appendMessage(text, 'me');
+        input.value = '';
+        
+        // Блокируем интерфейс
+        sendBtn.disabled = true;
+        input.disabled = true;
+
+        // Показываем красивую анимацию ожидания (три точки)
+        appendMessage('', 'bot', '', true);
+
+        try {
+          const res = await fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: text })
+          });
+
+          removeTypingIndicator();
+
+          if (!res.ok) throw new Error(`HTTP Hata! Statu: ${res.status}`);
+
+          const data = await res.json();
+          const display = data.answer || '(no answer)';
+          
+          // Проверяем наличие intent и confidence перед выводом
+          const meta = data.intent 
+            ? `Intent: ${data.intent} · Confidence: ${Number(data.confidence || 0).toFixed(3)}` 
+            : '';
+
+          appendMessage(display, 'bot', meta);
+        } catch (err) {
+          removeTypingIndicator();
+          appendMessage('Sunucu hatası: ' + (err.message || 'Bilinmeyen hata'), 'bot');
+        } finally {
+          sendBtn.disabled = false;
+          input.disabled = false;
+          input.focus();
+        }
+      });
+
+      // Перенос строки по Enter (без Shift)
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          form.requestSubmit();
+        }
+      });
+
+      // Приветственное сообщение при загрузке страницы
+      appendMessage('Merhaba! İstanbul hakkında bir şey sorun — örn. "Topkapı Sarayı nerede?"', 'bot');
+    </script>
+  </body>
+</html>

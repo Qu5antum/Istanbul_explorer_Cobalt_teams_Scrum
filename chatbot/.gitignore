@@ -1,0 +1,15 @@
+__pycache__
+.__pycache__
+
+
+model
+.model
+
+rag_data
+.rag_data
+
+venv
+.venv
+
+*.safetensors
+chatbot/model/istanbul_intent/
