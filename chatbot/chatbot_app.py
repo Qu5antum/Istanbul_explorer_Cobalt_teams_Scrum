@@ -73,24 +73,17 @@ INTENT_ACIKLAMA = {
     'spor_ve_eglence': 'Spor & Eğlence',
 }
 
-OFF_TOPIC_SOURCES = {
-    'kayit_yenileme',
-    'sinav_sistemi',
-    'burslar_indirimler',
-    'mezuniyet_sartlari',
-    'ogrenci_hizmetleri',
-    'akademik_takvim',
-    'disiplin_ve_kurallar',
-    'erasmus_uluslararasi',
-    'ois_teknik_destek',
-    'kampus_ve_ulasim',
-    'yurt_ve_konaklama',
-}
+# Bu eşiğin üzerinde olan (yani sorguya çok uzak olan) en iyi sonuç,
+# sorunun İstanbul içeriğiyle alakasız olduğu anlamına gelir.
+# IndexFlatL2 + paraphrase-multilingual-MiniLM-L12-v2 için ampirik olarak
+# belirlenmiş bir eşik. Gerekirse test ederek ayarlayabilirsiniz.
+SIMILARITY_THRESHOLD = 1.00
 
-ISTANBUL_FALLBACK = (
-    "Bu sohbet asistanı İstanbul şehir rehberidir. "
-    "İstanbul hakkında turizm, ulaşım, yemek, tarih, semtler ve kültür bilgisi verebilirim. "
-    "Topkapı Üniversitesi ya da kampüs içi detaylar gibi özel eğitim kurumlarına ait bilgiler bu kapsamın dışındadır."
+OFF_TOPIC_FALLBACK = (
+    "Üzgünüm, ben sadece İstanbul hakkında (gezilecek yerler, tarih, ulaşım, "
+    "yemek, semtler, kültür ve etkinlikler) sorulara yanıt verebilen bir asistanım. 🕌\n\n"
+    "Bu soru kapsamımın dışında kalıyor. İstanbul'da nereyi gezebileceğiniz, "
+    "hangi semte gidebileceğiniz ya da şehir hakkında başka bir şey sormak ister misiniz?"
 )
 
 # --------------------------------------------------
@@ -125,48 +118,71 @@ def detect_intent(text):
     return INTENT_LABELS[best_idx], float(probs[best_idx])
 
 def retrieve_context(query, k=3):
-    q_vec = embed_model.encode([query]).astype("float32")
-    distances, indices = faiss_index.search(q_vec, k)
-    
+    q_vec = embed_model.encode(
+        [query],
+        normalize_embeddings=True
+    ).astype("float32")
+
+    scores, indices = faiss_index.search(q_vec, k)
+
     results = []
-    for dist, idx in zip(distances[0], indices[0]):
+
+    for score, idx in zip(scores[0], indices[0]):
+        if idx == -1:
+            continue
+
         results.append({
             "metin": all_chunks[idx],
             "kaynak": chunk_meta[idx].get("kaynak", "Bilinmeyen Kaynak"),
-            "dist": float(dist)
+            "score": float(score)
         })
+
+    print("QUERY:", query)
+    print("TOP SCORES:", scores[0])
+
     return results
 
 def chatbot_logic(message):
-    raw_intent, score = detect_intent(message)
+    raw_intent, confidence = detect_intent(message)
     retrieved = retrieve_context(message)
 
-    filtered = [r for r in retrieved if r["kaynak"] not in OFF_TOPIC_SOURCES]
+    if not retrieved:
+        return OFF_TOPIC_FALLBACK, "🚫 Konu Dışı", confidence
 
-    # Eğer tüm sonuçlar eğitim kurumuna özel kaynaklarsa, İstanbul içeriğiyle yanıtlayalım
-    if not filtered:
-        answer = ISTANBUL_FALLBACK
-        return answer, f"🤖 {INTENT_ACIKLAMA.get(raw_intent, raw_intent)}", score
+    best_score = retrieved[0]["score"]
 
-    # Преобразуем технический интент в красивый вид с эмодзи
-    emoji = INTENT_EMOJIS.get(raw_intent, '🤖')
+    # Проверка на off-topic
+    if best_score < SIMILARITY_THRESHOLD:
+        return OFF_TOPIC_FALLBACK, "🚫 Konu Dışı", confidence
+
+    # Берём только релевантные чанки
+    relevant = [
+        r for r in retrieved
+        if r["score"] >= SIMILARITY_THRESHOLD
+    ]
+
+    if not relevant:
+        return OFF_TOPIC_FALLBACK, "🚫 Konu Dışı", confidence
+
+    emoji = INTENT_EMOJIS.get(raw_intent, "🤖")
     text_intent = INTENT_ACIKLAMA.get(raw_intent, raw_intent)
     pretty_intent = f"{emoji} {text_intent}"
 
-    cevap = ""
-    kaynaklar = set()
+    cevap_parts = []
+    kaynaklar = []
 
-    # Собираем контекст из top-2 результатов, off-topic kaynakları hariç tutuyoruz
-    for r in filtered[:2]:
-        cevap += r["metin"].strip() + "\n\n"
-        if r["kaynak"]:
-            kaynaklar.add(r["kaynak"])
+    for r in relevant[:2]:
+        cevap_parts.append(r["metin"].strip())
 
-    # Красиво добавляем источники в конец ответа
+        if r["kaynak"] not in kaynaklar:
+            kaynaklar.append(r["kaynak"])
+
+    final_answer = "\n\n".join(cevap_parts)
+
     if kaynaklar:
-        cevap += "📍 **Kaynaklar:** " + ", ".join(kaynaklar)
+        final_answer += "\n\n📍 Kaynaklar: " + ", ".join(kaynaklar)
 
-    return cevap.strip(), pretty_intent, score
+    return final_answer, pretty_intent, confidence
 
 # --------------------------------------------------
 # ENDPOINTS

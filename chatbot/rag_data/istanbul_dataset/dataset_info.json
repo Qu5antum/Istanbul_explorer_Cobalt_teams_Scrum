@@ -2,11 +2,11 @@
   "citation": "",
   "description": "",
   "features": {
-    "kaynak": {
+    "text": {
       "dtype": "string",
       "_type": "Value"
     },
-    "metin": {
+    "kaynak": {
       "dtype": "string",
       "_type": "Value"
     }
